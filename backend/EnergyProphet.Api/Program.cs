@@ -1,4 +1,4 @@
-using EnergySim.Api.Services;
+using EnergyProphet.Api.Services;
 using Microsoft.OpenApi.Models;
 
 
@@ -9,12 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => {
-c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnergySim API", Version = "v1" });
+c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnergyProphet API", Version = "v1" });
 });
 
 
 // DI: repository and simulation service
-builder.Services.AddSingleton<IRepository, DataRepository>();
+builder.Services.AddSingleton<IDataRepository, DataRepository>();
 builder.Services.AddTransient<ISimulationService, SimulationService>();
 
 

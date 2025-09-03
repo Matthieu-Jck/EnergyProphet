@@ -1,7 +1,7 @@
-using EnergySim.Api.Models;
+using EnergyProphet.Api.Models;
 
 
-namespace EnergySim.Api.Services;
+namespace EnergyProphet.Api.Services;
 
 
 public interface ISimulationService

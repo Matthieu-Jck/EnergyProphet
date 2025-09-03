@@ -1,4 +1,3 @@
-// src/components/KPIBar.tsx (minor style improvements for consistency)
 import { SimulationResult } from '../types'
 
 interface Props {

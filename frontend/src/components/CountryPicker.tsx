@@ -1,5 +1,5 @@
-// src/components/CountryPicker.tsx (minor style improvements for consistency)
 import { Country } from '../types'
+import Select, { components } from 'react-select'
 
 interface Props {
     countries: Country[]
@@ -7,17 +7,68 @@ interface Props {
     onChange: (id: string) => void
 }
 
+const { SingleValue } = components
+
 export default function CountryPicker({ countries, value, onChange }: Props) {
+    const selectedCountry = countries.find((c) => c.id === value)
+
     return (
-        <select
-            className="border border-gray-300 rounded p-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-            value={value}
-            onChange={e => onChange(e.target.value)}
-        >
-            <option value="">Select country...</option>
-            {countries.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-        </select>
+        <Select
+            options={countries}
+            value={selectedCountry}
+            onChange={(option) => onChange(option ? option.id : '')}
+            getOptionLabel={(option: Country) => option.name}
+            getOptionValue={(option: Country) => option.id}
+            formatOptionLabel={(option: Country) => (
+                <div className="flex items-center">
+                    <img
+                        src={`/icons/${option.id.toLowerCase()}.png`}
+                        alt={`${option.name} flag`}
+                        className="w-5 h-5 mr-2"
+                    />
+                    <span>{option.name}</span>
+                </div>
+            )}
+            className="text-black"
+            styles={{
+                control: (base) => ({
+                    ...base,
+                    backgroundColor: '#ffffffff',
+                    color: 'black',
+                    borderColor: '#000000ff',
+                    padding: '0.25rem',
+                    borderRadius: '0.25rem',
+                    '&:hover': {
+                        borderColor: '#0eae00ff',
+                    },
+                    boxShadow: 'none',
+                    width: '160px',
+                    fontSize: '0.875rem',
+                    minHeight: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    textAlign: 'center'
+                }),
+                singleValue: (base) => ({
+                    ...base,
+                    color: 'black',
+                    fontSize: '0.875rem',
+                    lineHeight: '1.25',
+                    margin: 0,
+                    padding: 0,
+                }),
+                menu: (base) => ({
+                    ...base,
+                    color: '#1F2937',
+                    width: '160px',
+                }),
+                option: (base, { isFocused }) => ({
+                    ...base,
+                    backgroundColor: isFocused ? '#F3F4F6' : 'white',
+                    color: '#1F2937',
+                    fontSize: '0.875rem',
+                }),
+            }}
+        />
     )
 }

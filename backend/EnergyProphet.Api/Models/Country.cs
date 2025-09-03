@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 
 
-namespace EnergySim.Api.Models;
+namespace EnergyProphet.Api.Models;
 
 
 public class Country

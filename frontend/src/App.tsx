@@ -1,4 +1,3 @@
-// src/App.tsx (modified)
 import { useEffect, useState } from 'react'
 import ProjectionChart from './components/ProjectionChart'
 import KPIBar from './components/KPIBar'
@@ -10,7 +9,7 @@ import { getCountries, getCountry, simulatePolicy } from './api'
 
 function App() {
     const [countries, setCountries] = useState<Country[]>([])
-    const [selected, setSelected] = useState<string>('')
+    const [selected, setSelected] = useState<string>('che') // Default to Switzerland
     const [current, setCurrent] = useState<Country | null>(null)
     const [result, setResult] = useState<SimulationResult | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
@@ -19,7 +18,19 @@ function App() {
     useEffect(() => {
         setLoading(true)
         getCountries()
-            .then(setCountries)
+            .then(data => {
+                const filteredCountries = data.filter(c => 
+                    c.id.toLowerCase() === 'che' || c.id.toLowerCase() === 'fra'
+                )
+                setCountries(filteredCountries)
+                // Ensure Switzerland is selected if available
+                const switzerland = filteredCountries.find(c => c.id.toLowerCase() === 'che')
+                if (switzerland) {
+                    setSelected(switzerland.id)
+                } else if (filteredCountries.length > 0) {
+                    setSelected(filteredCountries[0].id) // Fallback to first available
+                } 
+            })
             .catch(err => setError(err.message))
             .finally(() => setLoading(false))
     }, [])
@@ -50,23 +61,27 @@ function App() {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            {/* Top Bar */}
             <header className="bg-primary-600 text-white shadow-md">
-                <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">EnergyProphet</h1>
-                    <nav className="space-x-4">
-                        {/* Space for menu items; add links or buttons here as needed */}
-                        <a href="#" className="hover:underline">Home</a>
-                        <a href="#" className="hover:underline">About</a>
-                        <a href="#" className="hover:underline">Contact</a>
-                    </nav>
+                <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                    <h1 className="text-xl font-bold">EnergyProphet</h1>
+                    <a href="/" className="flex-1 flex justify-center">
+                        <img 
+                            src="/icons/EnergyProphet.png" 
+                            alt="EnergyProphet Logo" 
+                            className="h-10 w-auto"
+                        />
+                    </a>
+                    <div className="flex items-center space-x-4">
+                        <nav className="space-x-4">
+                        </nav>
+                        <CountryPicker countries={countries} value={selected} onChange={setSelected} />
+                    </div>
                 </div>
             </header>
 
             <main className="container mx-auto p-6 space-y-6">
                 {error && <div className="bg-red-100 text-red-700 p-4 rounded">{error}</div>}
                 {loading && <div className="text-primary-600">Loading...</div>}
-                <CountryPicker countries={countries} value={selected} onChange={setSelected} />
                 {current && (
                     <>
                         <CurrentOverview country={current} />

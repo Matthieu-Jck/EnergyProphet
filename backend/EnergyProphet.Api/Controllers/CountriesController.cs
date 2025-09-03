@@ -1,19 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
-using EnergySim.Api.Services;
-using EnergySim.Api.Models;
+using EnergyProphet.Api.Services;
+using EnergyProphet.Api.Models;
 
 
-namespace EnergySim.Api.Controllers;
+namespace EnergyProphet.Api.Controllers;
 
 
 [ApiController]
 [Route("api/[controller]")]
 public class CountriesController : ControllerBase
 {
-    private readonly IRepository _repo;
+    private readonly IDataRepository _repo;
 
 
-    public CountriesController(IRepository repo)
+    public CountriesController(IDataRepository repo)
     {
         _repo = repo;
     }

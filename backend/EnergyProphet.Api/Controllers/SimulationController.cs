@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using EnergySim.Api.Services;
-using EnergySim.Api.Models;
+using EnergyProphet.Api.Services;
+using EnergyProphet.Api.Models;
 
 
-namespace EnergySim.Api.Controllers;
+namespace EnergyProphet.Api.Controllers;
 
 
 [ApiController]
