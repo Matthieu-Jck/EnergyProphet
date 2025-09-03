@@ -1,4 +1,4 @@
-namespace EnergySim.Api.Models;
+namespace EnergyProphet.Api.Models;
 
 
 public class YearMix

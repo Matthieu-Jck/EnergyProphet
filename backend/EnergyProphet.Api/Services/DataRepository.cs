@@ -1,11 +1,11 @@
 using System.Text.Json;
-using EnergySim.Api.Models;
+using EnergyProphet.Api.Models;
 
 
-namespace EnergySim.Api.Services;
+namespace EnergyProphet.Api.Services;
 
 
-public class DataRepository : IRepository
+public class DataRepository : IDataRepository
 {
     private readonly IReadOnlyList<Country> _countries;
 

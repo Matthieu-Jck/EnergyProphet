@@ -1,16 +1,16 @@
-using EnergySim.Api.Models;
+using EnergyProphet.Api.Models;
 
 
-namespace EnergySim.Api.Services;
+namespace EnergyProphet.Api.Services;
 
 
 public class SimulationService : ISimulationService
 {
-    private readonly IRepository _repo;
+    private readonly IDataRepository _repo;
     private const double DefaultAnnualGrowth = 0.01; // 1%/year baseline assumption
 
 
-    public SimulationService(IRepository repo)
+    public SimulationService(IDataRepository repo)
     {
         _repo = repo;
     }

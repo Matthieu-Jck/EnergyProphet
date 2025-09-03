@@ -1,10 +1,8 @@
-using EnergySim.Api.Models;
+using EnergyProphet.Api.Models;
 
+namespace EnergyProphet.Api.Services;
 
-namespace EnergySim.Api.Services;
-
-
-public interface IRepository
+public interface IDataRepository
 {
     Task<IEnumerable<Country>> GetCountriesAsync(CancellationToken ct = default);
     Task<Country?> GetCountryAsync(string id, CancellationToken ct = default);
