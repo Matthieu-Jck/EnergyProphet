@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
-import ProjectionChart from './components/ProjectionChart'
-import KPIBar from './components/KPIBar'
 import CurrentOverview from './components/CurrentOverview'
-import PolicyForm from './components/PolicyForm'
 import CountryPicker from './components/CountryPicker'
 import { Country, PolicyInput, SimulationResult } from './types'
 import { getCountries, getCountry, simulatePolicy } from './api'
@@ -21,7 +18,7 @@ function App() {
         getCountries()
             .then(data => {
                 const filteredCountries = data.filter(
-                    c => c.id.toLowerCase() === 'che' || c.id.toLowerCase() === 'fra'
+                    c => ['che', 'fra', 'deu', 'ita'].includes(c.id.toLowerCase())
                 )
                 setCountries(filteredCountries)
                 const switzerland = filteredCountries.find(c => c.id.toLowerCase() === 'che')
@@ -107,67 +104,10 @@ function App() {
                     </motion.div>
                 )}
 
-                {loading && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                        className="text-primary-600"
-                    >
-                        Loading...
-                    </motion.div>
-                )}
-
                 {current && (
                     <CurrentOverview country={current} />
                 )}
-
-                {/*{current && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 1.1 }}
-                    >
-                        <PolicyForm country={current} onSimulate={handleSimulate} />
-                    </motion.div>
-                )}
-
-                {result && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 1.2 }}
-                        >
-                            <KPIBar result={result} />
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 1.3 }}
-                        >
-                            <ProjectionChart result={result} />
-                        </motion.div>
-                    </>
-                )} */}
             </main>
-
-            <motion.footer
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 1.4 }}
-                className="bg-primary-400 text-white shadow-md"
-            >
-                <div className="container mx-auto px-4 py-4 text-center">
-                    <h3 className="text-white">
-                        EnergyProphet is an independent website created for educational purposes only.
-                        Please note that the information provided may not always be complete, accurate, or up to date.
-                        For any inquiries, feel free to contact us at the following address:
-                        mjacques.dev@gmail.com
-                    </h3>
-                </div>
-            </motion.footer>
         </div>
     )
 }

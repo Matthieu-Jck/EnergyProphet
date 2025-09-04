@@ -10,3 +10,10 @@ body {
 h1, h2, h3 {
     @apply text-primary-400;
 }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* prevents scrolling */
+}

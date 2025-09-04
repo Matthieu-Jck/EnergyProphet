@@ -2,7 +2,7 @@
   {
     "Id": "che",
     "Name": "Switzerland",
-    "TotalGenerationTWh": 65.7,
+    "TotalGenerationTWh": 72.1,
     "Technologies": [
       {
         "Id": "hydro",
@@ -15,7 +15,7 @@
       {
         "Id": "nuclear",
         "Name": "Nuclear",
-        "Share": 0.33,
+        "Share": 0.32,
         "EmissionFactor_tCO2_per_MWh": 0.01,
         "ImportTonsPerMWh": 0,
         "UnitCostUsdPerMWh": 60
@@ -23,7 +23,7 @@
       {
         "Id": "solar",
         "Name": "Solar",
-        "Share": 0.05,
+        "Share": 0.08,
         "EmissionFactor_tCO2_per_MWh": 0.02,
         "ImportTonsPerMWh": 0,
         "UnitCostUsdPerMWh": 55
@@ -31,7 +31,7 @@
       {
         "Id": "wind",
         "Name": "Wind",
-        "Share": 0.05,
+        "Share": 0.03,
         "EmissionFactor_tCO2_per_MWh": 0.01,
         "ImportTonsPerMWh": 0,
         "UnitCostUsdPerMWh": 60
@@ -41,12 +41,12 @@
   {
     "Id": "fra",
     "Name": "France",
-    "TotalGenerationTWh": 550.0,
+    "TotalGenerationTWh": 536.5,
     "Technologies": [
       {
         "Id": "nuclear",
         "Name": "Nuclear",
-        "Share": 0.70,
+        "Share": 0.67,
         "EmissionFactor_tCO2_per_MWh": 0.01,
         "ImportTonsPerMWh": 0,
         "UnitCostUsdPerMWh": 60
@@ -54,7 +54,7 @@
       {
         "Id": "hydro",
         "Name": "Hydro",
-        "Share": 0.12,
+        "Share": 0.14,
         "EmissionFactor_tCO2_per_MWh": 0.01,
         "ImportTonsPerMWh": 0,
         "UnitCostUsdPerMWh": 50
@@ -62,7 +62,7 @@
       {
         "Id": "wind",
         "Name": "Wind",
-        "Share": 0.08,
+        "Share": 0.09,
         "EmissionFactor_tCO2_per_MWh": 0.01,
         "ImportTonsPerMWh": 0,
         "UnitCostUsdPerMWh": 60
@@ -70,7 +70,7 @@
       {
         "Id": "solar",
         "Name": "Solar",
-        "Share": 0.03,
+        "Share": 0.04,
         "EmissionFactor_tCO2_per_MWh": 0.02,
         "ImportTonsPerMWh": 0,
         "UnitCostUsdPerMWh": 55
@@ -78,11 +78,125 @@
       {
         "Id": "gas",
         "Name": "Gas",
-        "Share": 0.07,
+        "Share": 0.06,
         "EmissionFactor_tCO2_per_MWh": 0.5,
         "ImportTonsPerMWh": 0.2,
         "UnitCostUsdPerMWh": 50,
         "ImportResource": "Gas"
+      }
+    ]
+  },
+  {
+    "Id": "deu",
+    "Name": "Germany",
+    "TotalGenerationTWh": 432,
+    "Technologies": [
+      {
+        "Id": "wind",
+        "Name": "Wind",
+        "Share": 0.31,
+        "EmissionFactor_tCO2_per_MWh": 0.01,
+        "ImportTonsPerMWh": 0,
+        "UnitCostUsdPerMWh": 60
+      },
+      {
+        "Id": "solar",
+        "Name": "Solar",
+        "Share": 0.16,
+        "EmissionFactor_tCO2_per_MWh": 0.02,
+        "ImportTonsPerMWh": 0,
+        "UnitCostUsdPerMWh": 55
+      },
+      {
+        "Id": "hydro",
+        "Name": "Hydro",
+        "Share": 0.05,
+        "EmissionFactor_tCO2_per_MWh": 0.01,
+        "ImportTonsPerMWh": 0,
+        "UnitCostUsdPerMWh": 50
+      },
+      {
+        "Id": "bio",
+        "Name": "Bioenergy",
+        "Share": 0.10,
+        "EmissionFactor_tCO2_per_MWh": 0.02,
+        "ImportTonsPerMWh": 0,
+        "UnitCostUsdPerMWh": 70
+      },
+      {
+        "Id": "coal",
+        "Name": "Coal",
+        "Share": 0.23,
+        "EmissionFactor_tCO2_per_MWh": 0.9,
+        "ImportTonsPerMWh": 0.4,
+        "UnitCostUsdPerMWh": 40,
+        "ImportResource": "Coal"
+      },
+      {
+        "Id": "gas",
+        "Name": "Gas",
+        "Share": 0.15,
+        "EmissionFactor_tCO2_per_MWh": 0.5,
+        "ImportTonsPerMWh": 0.2,
+        "UnitCostUsdPerMWh": 50,
+        "ImportResource": "Gas"
+      }
+    ]
+  },
+  {
+    "Id": "ita",
+    "Name": "Italy",
+    "TotalGenerationTWh": 264,
+    "Technologies": [
+      {
+        "Id": "gas",
+        "Name": "Gas",
+        "Share": 0.45,
+        "EmissionFactor_tCO2_per_MWh": 0.5,
+        "ImportTonsPerMWh": 0.2,
+        "UnitCostUsdPerMWh": 50,
+        "ImportResource": "Gas"
+      },
+      {
+        "Id": "hydro",
+        "Name": "Hydro",
+        "Share": 0.18,
+        "EmissionFactor_tCO2_per_MWh": 0.01,
+        "ImportTonsPerMWh": 0,
+        "UnitCostUsdPerMWh": 50
+      },
+      {
+        "Id": "solar",
+        "Name": "Solar",
+        "Share": 0.14,
+        "EmissionFactor_tCO2_per_MWh": 0.02,
+        "ImportTonsPerMWh": 0,
+        "UnitCostUsdPerMWh": 55
+      },
+      {
+        "Id": "wind",
+        "Name": "Wind",
+        "Share": 0.09,
+        "EmissionFactor_tCO2_per_MWh": 0.01,
+        "ImportTonsPerMWh": 0,
+        "UnitCostUsdPerMWh": 60
+      },
+      {
+        "Id": "bio",
+        "Name": "Bioenergy",
+        "Share": 0.07,
+        "EmissionFactor_tCO2_per_MWh": 0.02,
+        "ImportTonsPerMWh": 0,
+        "UnitCostUsdPerMWh": 70
+      },
+      {
+        "Id": "coal",
+        "Name": "Coal",
+        "Share": 0.04,
+        "EmissionFactor_tCO2_per_MWh": 0.9,
+        "ImportTonsPerMWh": 0.4,
+        "UnitCostUsdPerMWh": 40,
+        "ImportResource": "Coal"
       }
     ]
   }

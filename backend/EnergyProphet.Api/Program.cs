@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IAService>();
 builder.Services.AddSwaggerGen(c => {
 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnergyProphet API", Version = "v1" });
 });
@@ -15,7 +17,6 @@ c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnergyProphet API", Version = "v1"
 
 // DI: repository and simulation service
 builder.Services.AddSingleton<IDataRepository, DataRepository>();
-builder.Services.AddTransient<ISimulationService, SimulationService>();
 
 
 var app = builder.Build();
