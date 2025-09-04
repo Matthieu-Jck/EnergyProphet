@@ -8,5 +8,5 @@ body {
 }
 
 h1, h2, h3 {
-    @apply text-primary-900;
+    @apply text-primary-400;
 }
