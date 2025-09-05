@@ -15,19 +15,3 @@ export interface Country {
     totalGenerationTWh: number
     technologies: Technology[]
 }
-
-
-export interface PolicyInput {
-    countryId: string
-    targetYear: number
-    shares: Record<string, number>
-}
-
-
-export interface SimulationResult {
-    year: number
-    co2Mt: number
-    totalCostUsd: number
-    imports: Record<string, number>
-    generationTWh: Record<string, number>
-}
