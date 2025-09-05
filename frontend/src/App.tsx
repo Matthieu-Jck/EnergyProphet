@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import CurrentOverview from './components/CurrentOverview'
 import CountryPicker from './components/CountryPicker'
-import { Country, PolicyInput, SimulationResult } from './types'
+import { Country} from './types'
 import { getCountries, getCountry, simulatePolicy } from './api'
 import { motion } from 'framer-motion'
 
@@ -9,12 +9,9 @@ function App() {
     const [countries, setCountries] = useState<Country[]>([])
     const [selected, setSelected] = useState<string>('che')
     const [current, setCurrent] = useState<Country | null>(null)
-    const [result, setResult] = useState<SimulationResult | null>(null)
-    const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        setLoading(true)
         getCountries()
             .then(data => {
                 const filteredCountries = data.filter(
@@ -29,32 +26,15 @@ function App() {
                 }
             })
             .catch(err => setError(err.message))
-            .finally(() => setLoading(false))
     }, [])
 
     useEffect(() => {
         if (selected) {
-            setLoading(true)
             getCountry(selected)
                 .then(setCurrent)
                 .catch(err => setError(err.message))
-                .finally(() => setLoading(false))
-            setResult(null)
         }
     }, [selected])
-
-    const handleSimulate = async (policy: PolicyInput) => {
-        try {
-            setLoading(true)
-            const res = await simulatePolicy(policy)
-            setResult(res)
-            setError(null)
-        } catch (err: any) {
-            setError(err.message || 'Simulation failed')
-        } finally {
-            setLoading(false)
-        }
-    }
 
     return (
         <div className="min-h-screen bg-gray-100">

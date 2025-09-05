@@ -7,8 +7,6 @@ interface Props {
     onChange: (id: string) => void
 }
 
-const { SingleValue } = components
-
 export default function CountryPicker({ countries, value, onChange }: Props) {
     const selectedCountry = countries.find((c) => c.id === value)
 

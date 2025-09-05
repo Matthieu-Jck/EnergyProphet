@@ -1,6 +1,7 @@
 import { Country } from "../types";
 import { motion, useMotionValue, animate } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
+import { DraggablePowerIconProps } from "./DraggablePowerIconProps";
 
 interface Props {
   country: Country;
@@ -104,15 +105,15 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
         newShare > originalShare
           ? "text-green-600"
           : newShare < originalShare
-          ? "text-red-600"
-          : "text-black";
+            ? "text-red-600"
+            : "text-black";
 
       const genColor =
         newGenerationTWh > originalGenerationTWh
           ? "text-green-600"
           : newGenerationTWh < originalGenerationTWh
-          ? "text-red-600"
-          : "text-black";
+            ? "text-red-600"
+            : "text-black";
 
       const generationGWh = newGenerationTWh * 1000;
 
@@ -183,7 +184,9 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
                 variants={cardVariants}
                 initial={firstLoad ? "hidden" : false}
                 animate={firstLoad ? "visible" : false}
-                ref={(el) => (techRefs.current[t.id] = el)}
+                ref={(el) => {
+                  techRefs.current[t.id] = el; // No return statement, implicit void
+                }}
                 className="grid grid-cols-2 gap-2 border rounded-md p-2 bg-gray-50 hover:shadow transition-shadow duration-200 min-h-[56px]"
               >
                 <div className="flex flex-col items-center justify-center">
@@ -337,7 +340,6 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
   );
 }
 
-/** Separate draggable icon with precise cursor tracking and no CSS transform transitions */
 function DraggablePowerIcon({
   icon,
   index,
@@ -347,7 +349,7 @@ function DraggablePowerIcon({
   setIcons,
   setCurrentDragIndex,
   unitAddition,
-}: any) {
+}: DraggablePowerIconProps) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -367,10 +369,9 @@ function DraggablePowerIcon({
       style={{
         x,
         y,
-        touchAction: "none", // prevent browser gestures that add latency
-        willChange: "transform", // hint compositor
+        touchAction: "none",
+        willChange: "transform",
       }}
-      // Use Framer for hover scale so CSS doesn't animate transforms
       whileHover={{ scale: 1.1 }}
       whileTap={{ cursor: "grabbing" }}
       variants={{
@@ -404,17 +405,16 @@ function DraggablePowerIcon({
         }
 
         if (droppedOn) {
-          setAdded((prev: any) => ({
+          setAdded((prev: { [x: string]: number }) => ({
             ...prev,
             [droppedOn]: (prev[droppedOn] || 0) + unitAddition,
           }));
-          setIcons((prev: any) =>
-            prev.map((ic: any) =>
+          setIcons((prev: { id: number; used: boolean }[]) =>
+            prev.map((ic: { id: number; used: boolean }) =>
               ic.id === icon.id ? { ...ic, used: true } : ic
             )
           );
         } else {
-          // snap back instantly (no CSS transition to cause lag)
           x.set(0);
           y.set(0);
         }
