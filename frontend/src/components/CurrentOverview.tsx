@@ -1,14 +1,13 @@
 import { Country } from "../types";
 import { motion, useMotionValue, animate } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
-import { DraggablePowerIconProps } from "./DraggablePowerIconProps";
 
 interface Props {
   country: Country;
   onSimulate?: () => void;
 }
 
-/** Animated number (Gives a smooth numeric interpolation) */
+/** Animated number (smooth interpolation) */
 function AnimatedNumber({
   value,
   format = (v: number) => v.toFixed(0),
@@ -34,37 +33,20 @@ function AnimatedNumber({
 }
 
 export default function CurrentOverview({ country, onSimulate }: Props) {
-  // interactive state that must reset when the country changes
-  const [added, setAdded] = useState<Record<string, number>>({});
-  const [icons, setIcons] = useState(
-    Array.from({ length: 5 }, (_, i) => ({ id: i, used: false }))
-  );
-  const [currentDragIndex, setCurrentDragIndex] = useState(-1);
-
-  // refs for hit-testing drops
-  const iconRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const [addedByTech, setAddedByTech] = useState<Record<string, number>>({});
   const techRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [openTechId, setOpenTechId] = useState<string | null>(null);
 
-  // firstLoad ensures the energy cards animate only on the very first page load
   const [firstLoad, setFirstLoad] = useState(true);
-  useEffect(() => {
-    // flip after first paint
-    setFirstLoad(false);
-  }, []);
+  useEffect(() => setFirstLoad(false), []);
 
-  // keep track of the previous country id so we only reset when it actually changes
   const prevCountryIdRef = useRef<string>(country.id);
-
   useEffect(() => {
     if (prevCountryIdRef.current !== country.id) {
-      // Country changed -> reset interactive state
-      setAdded({});
-      setIcons(Array.from({ length: 5 }, (_, i) => ({ id: i, used: false })));
-      setCurrentDragIndex(-1);
-      // update prev id
+      setAddedByTech({});
+      setOpenTechId(null);
       prevCountryIdRef.current = country.id;
     }
-    // we intentionally do NOT change `firstLoad` here — we want the firstLoad animation only once per site load
   }, [country.id]);
 
   const allTechnologies = [
@@ -81,49 +63,34 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
   const baseProduction = country.totalGenerationTWh;
   const years = 2050 - 2025;
   const annualGrowthRate = 0.02;
-  const predictedProduction =
-    baseProduction * Math.pow(1 + annualGrowthRate, years);
-  const difference = predictedProduction - baseProduction;
-  const unitAddition = difference / icons.length; // each icon adds this many TWh
+  const predictedProduction = baseProduction * Math.pow(1 + annualGrowthRate, years);
+  const goalDelta = predictedProduction - baseProduction;
+  const unitStepTWh = goalDelta / 5;
 
-  const addedTotal = Object.values(added).reduce((s, v) => s + v, 0);
-  const newTotalTWh = baseProduction + addedTotal;
+  const shareMap: Record<string, number> = Object.fromEntries(
+    country.technologies.map((t) => [t.id, t.share])
+  );
+  const originalGenById: Record<string, number> = Object.fromEntries(
+    allTechnologies.map((t) => [t.id, (shareMap[t.id] || 0) * baseProduction])
+  );
 
-  // Build display rows including color logic (black/green/red)
+  const totalDelta = Object.values(addedByTech).reduce((s, v) => s + v, 0);
+  const newTotalTWh = baseProduction + totalDelta;
+
   const displayTechs = allTechnologies
     .map((base) => {
-      const tech = country.technologies.find((t) => t.id === base.id);
-      const originalShare = tech ? tech.share : 0;
-
-      const originalGenerationTWh = originalShare * baseProduction;
-      const addedThis = added[base.id] || 0;
-
-      const newGenerationTWh = originalGenerationTWh + addedThis;
-      const newShare = newTotalTWh > 0 ? newGenerationTWh / newTotalTWh : 0;
+      const originalShare = shareMap[base.id] || 0;
+      const originalTWh = originalGenById[base.id] || 0;
+      const delta = addedByTech[base.id] || 0;
+      const newTWh = Math.max(0, originalTWh + delta);
+      const newShare = newTotalTWh > 0 ? newTWh / newTotalTWh : 0;
 
       const shareColor =
-        newShare > originalShare
-          ? "text-green-600"
-          : newShare < originalShare
-            ? "text-red-600"
-            : "text-black";
-
+        newShare > originalShare ? "text-green-600" : newShare < originalShare ? "text-red-600" : "text-black";
       const genColor =
-        newGenerationTWh > originalGenerationTWh
-          ? "text-green-600"
-          : newGenerationTWh < originalGenerationTWh
-            ? "text-red-600"
-            : "text-black";
+        newTWh > originalTWh ? "text-green-600" : newTWh < originalTWh ? "text-red-600" : "text-black";
 
-      const generationGWh = newGenerationTWh * 1000;
-
-      return {
-        ...base,
-        share: newShare,
-        shareColor,
-        generationGWh,
-        genColor,
-      };
+      return { ...base, share: newShare, shareColor, generationTWh: newTWh, genColor };
     })
     .sort((a, b) => b.share - a.share);
 
@@ -132,35 +99,47 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35, delay: 0.2 + i * 0.04 },
-    }),
+    visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.35, delay: 0.2 + i * 0.04 } }),
   };
 
-  const iconVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35, delay: 0.4 + i * 0.04 },
-    }),
-  };
-
-  const formatEnergy = (gwh: number) =>
-    gwh > 999 ? `${Math.round(gwh / 1000)} TWh` : `${Math.round(gwh)} GWh`;
-
-  const allUsed = icons.every((ic) => ic.used);
-  const isBalanced = Math.abs(newTotalTWh - predictedProduction) < 1e-9;
+  const formatEnergy = (twh: number) => `${Math.round(twh)} TWh`;
+  const progress = Math.min((newTotalTWh / predictedProduction) * 100, 100);
+  const EPS = 1e-6;
+  const isBalanced = Math.abs(newTotalTWh - predictedProduction) < EPS;
 
   const handleReset = () => {
-    setAdded({});
-    setIcons(Array.from({ length: 5 }, (_, i) => ({ id: i, used: false })));
-    setCurrentDragIndex(-1);
+    setAddedByTech({});
+    setOpenTechId(null);
   };
 
-  const progress = Math.min((newTotalTWh / predictedProduction) * 100, 100);
+  const handleCardClick = (techId: string) => {
+    setOpenTechId((prev) => (prev === techId ? null : techId));
+  };
+
+  const adjustTech = (techId: string, dir: 1 | -1) => {
+    setAddedByTech((prev) => {
+      const currentDelta = prev[techId] || 0;
+      const originalTWh = originalGenById[techId] || 0;
+      const minDelta = -originalTWh;
+      let appliedChange = 0;
+
+      if (dir === 1) {
+        const remainingToTarget = predictedProduction - (baseProduction + Object.values(prev).reduce((s, v) => s + v, 0));
+        if (remainingToTarget <= EPS) return prev;
+        appliedChange = Math.min(unitStepTWh, remainingToTarget);
+      } else {
+        const potentialNewDelta = currentDelta - unitStepTWh;
+        if (potentialNewDelta < minDelta) {
+          appliedChange = minDelta - currentDelta;
+        } else {
+          appliedChange = -unitStepTWh;
+        }
+      }
+
+      if (Math.abs(appliedChange) <= EPS) return prev;
+      return { ...prev, [techId]: currentDelta + appliedChange };
+    });
+  };
 
   return (
     <div className="h-full flex flex-col border border-emerald-200 p-4 rounded-lg bg-white shadow-md max-w-2xl mx-auto">
@@ -173,104 +152,99 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
         Current Energy Mix
       </motion.h2>
 
-      {/* Energy cards */}
       <div className="grid grid-cols-2 gap-3 mb-6 overflow-hidden">
         {[leftColumn, rightColumn].map((col, colIndex) => (
           <div key={colIndex} className="flex flex-col gap-3">
-            {col.map((t, index) => (
-              <motion.div
-                key={t.id}
-                custom={index}
-                variants={cardVariants}
-                initial={firstLoad ? "hidden" : false}
-                animate={firstLoad ? "visible" : false}
-                ref={(el) => {
-                  techRefs.current[t.id] = el; // No return statement, implicit void
-                }}
-                className="grid grid-cols-2 gap-2 border rounded-md p-2 bg-gray-50 hover:shadow transition-shadow duration-200 min-h-[56px]"
-              >
-                <div className="flex flex-col items-center justify-center">
-                  <img
-                    src={`/icons/${t.id}.png`}
-                    alt={`${t.name} icon`}
-                    className="w-7 h-7 mb-1"
-                  />
-                  <span className="text-xs font-medium text-center text-gray-800">
-                    {t.name}
-                  </span>
-                </div>
+            {col.map((t, index) => {
+              const isOpen = openTechId === t.id;
+              const sideClass = colIndex === 0 ? "left-full ml-2" : "right-full mr-2";
 
-                <div className="flex flex-col items-center justify-center border-l border-emerald-100 pl-1">
-                  <span
-                    className={`font-semibold text-base text-center transition-colors duration-300 ${t.shareColor}`}
-                  >
-                    <AnimatedNumber
-                      value={t.share * 100}
-                      format={(v) => `${v.toFixed(0)}%`}
-                      duration={1}
-                    />
-                  </span>
-                  <span
-                    className={`text-xs text-center transition-colors duration-300 ${t.genColor}`}
-                  >
-                    <AnimatedNumber
-                      value={t.generationGWh}
-                      format={formatEnergy}
-                      duration={1}
-                    />
-                  </span>
-                </div>
-              </motion.div>
-            ))}
+              const canIncrease = newTotalTWh < predictedProduction - EPS;
+              const canDecrease = t.generationTWh > EPS;
+
+              return (
+                <motion.div
+                  key={t.id}
+                  custom={index}
+                  variants={cardVariants}
+                  initial={firstLoad ? "hidden" : false}
+                  animate={firstLoad ? "visible" : false}
+                  ref={(el) => {
+                    techRefs.current[t.id] = el;
+                  }}
+                  onClick={() => handleCardClick(t.id)}
+                  className="relative grid grid-cols-2 gap-2 border rounded-md p-2 bg-gray-50 hover:shadow transition-shadow duration-200 min-h-[56px] cursor-pointer"
+                >
+                  <div className="flex flex-col items-center justify-center">
+                    <img src={`/icons/${t.id}.png`} alt={`${t.name} icon`} className="w-7 h-7 mb-1" />
+                    <span className="text-xs font-medium text-center text-gray-800">{t.name}</span>
+                  </div>
+
+                  <div className="flex flex-col items-center justify-center border-l border-emerald-100 pl-1">
+                    <span className={`font-semibold text-base text-center transition-colors duration-300 ${t.shareColor}`}>
+                      <AnimatedNumber value={t.share * 100} format={(v) => `${v.toFixed(0)}%`} duration={1} />
+                    </span>
+                    <span className={`text-xs text-center transition-colors duration-300 ${t.genColor}`}>
+                      <AnimatedNumber value={t.generationTWh} format={formatEnergy} duration={1} />
+                    </span>
+                  </div>
+
+                  {isOpen && (
+                    <div
+                      className={`absolute top-1/2 -translate-y-1/2 ${sideClass} z-20`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex flex-col items-center bg-white border border-emerald-200 rounded-xl shadow-lg p-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => adjustTech(t.id, 1)}
+                          disabled={!canIncrease}
+                          className={`w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:shadow-sm transition ${
+                            !canIncrease ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-50"
+                          }`}
+                          title="Increase by 20% of target gap"
+                        >
+                          <img src="/public/icons/plus.png" alt="Increase" className="w-5 h-5" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => adjustTech(t.id, -1)}
+                          disabled={!canDecrease}
+                          className={`w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:shadow-sm transition ${
+                            !canDecrease ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-50"
+                          }`}
+                          title="Decrease by 20% of target gap"
+                        >
+                          <img src="/public/icons/minus.png" alt="Decrease" className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
         ))}
       </div>
 
-      {/* Power icon area with instruction text */}
-      <div className="flex flex-col items-center gap-2 mb-6">
-        <div className="flex justify-center items-center gap-2 min-h-[44px] bg-emerald-50 border border-emerald-200 rounded-md p-3 w-full">
-          {allUsed && isBalanced ? (
-            <div className="flex gap-2">
-              <button
-                onClick={() => onSimulate?.()}
-                className="px-3 py-1.5 rounded-md bg-emerald-600 text-white text-sm font-medium shadow hover:bg-emerald-700 transition-colors"
-              >
-                Simulate
-              </button>
-              <button
-                onClick={handleReset}
-                className="px-3 py-1.5 rounded-md bg-gray-200 text-gray-800 text-sm font-medium shadow hover:bg-gray-300 transition-colors"
-              >
-                Reset
-              </button>
-            </div>
-          ) : (
-            icons.map(
-              (icon, index) =>
-                !icon.used && (
-                  <DraggablePowerIcon
-                    key={icon.id}
-                    icon={icon}
-                    index={index}
-                    iconRefs={iconRefs}
-                    techRefs={techRefs}
-                    setAdded={setAdded}
-                    setIcons={setIcons}
-                    setCurrentDragIndex={setCurrentDragIndex}
-                    unitAddition={unitAddition}
-                  />
-                )
-            )
-          )}
+      {isBalanced && (
+        <div className="flex justify-center gap-2 mb-6">
+          <button
+            onClick={() => onSimulate?.()}
+            className="px-3 py-1.5 rounded-md bg-emerald-600 text-white text-sm font-medium shadow hover:bg-emerald-700 transition-colors"
+          >
+            Analyze
+          </button>
+          <button
+            onClick={handleReset}
+            className="px-3 py-1.5 rounded-md bg-gray-200 text-gray-800 text-sm font-medium shadow hover:bg-gray-300 transition-colors"
+          >
+            Reset
+          </button>
         </div>
-        <p className="text-sm text-center text-gray-700 font-medium">
-          Drag and drop a power icon onto an energy source above to increase its
-          production by {formatEnergy(unitAddition * 1000)} (20% of the 2050
-          goal).
-        </p>
-      </div>
+      )}
 
-      {/* Production comparison and progress bar */}
       <div className="mt-auto">
         <div className="flex items-stretch justify-between mb-2">
           <motion.div
@@ -279,15 +253,9 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
             transition={{ duration: 0.35, delay: 0.6 }}
             className="bg-emerald-50 p-3 rounded-md shadow text-center flex-1"
           >
-            <h3 className="text-lg font-semibold text-emerald-800 mb-1">
-              Current Electricity Production
-            </h3>
+            <h3 className="text-lg font-semibold text-emerald-800 mb-1">Current Electricity Production</h3>
             <p className="text-2xl font-bold text-emerald-600">
-              <AnimatedNumber
-                value={newTotalTWh * 1000}
-                format={formatEnergy}
-                duration={1}
-              />
+              <AnimatedNumber value={newTotalTWh} format={formatEnergy} duration={1} />
             </p>
           </motion.div>
 
@@ -306,19 +274,11 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
             transition={{ duration: 0.35, delay: 0.75 }}
             className="bg-emerald-100 p-3 rounded-md shadow text-center flex-1"
           >
-            <h3 className="text-lg font-semibold text-emerald-800 mb-1">
-              Required Production in 2050
-            </h3>
+            <h3 className="text-lg font-semibold text-emerald-800 mb-1">Required Production in 2050</h3>
             <p className="text-2xl font-bold text-emerald-700">
-              <AnimatedNumber
-                value={predictedProduction * 1000}
-                format={formatEnergy}
-                duration={1}
-              />
+              <AnimatedNumber value={predictedProduction} format={formatEnergy} duration={1} />
             </p>
-            <p className="text-xs text-gray-600 mt-1">
-              Based on 2% annual growth rate
-            </p>
+            <p className="text-xs text-gray-600 mt-1">Based on 2% annual growth rate</p>
           </motion.div>
         </div>
 
@@ -337,90 +297,5 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
         </motion.div>
       </div>
     </div>
-  );
-}
-
-function DraggablePowerIcon({
-  icon,
-  index,
-  iconRefs,
-  techRefs,
-  setAdded,
-  setIcons,
-  setCurrentDragIndex,
-  unitAddition,
-}: DraggablePowerIconProps) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  return (
-    <motion.img
-      key={icon.id}
-      src="/icons/power.png"
-      alt="Power icon (draggable)"
-      className="w-10 h-10 cursor-grab transform-gpu select-none"
-      ref={(el) => {
-        iconRefs.current[index] = el;
-      }}
-      drag
-      dragConstraints={false}
-      dragElastic={0}
-      dragMomentum={false}
-      style={{
-        x,
-        y,
-        touchAction: "none",
-        willChange: "transform",
-      }}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ cursor: "grabbing" }}
-      variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.35, delay: 0.4 + index * 0.04 },
-        },
-      }}
-      initial="hidden"
-      animate="visible"
-      onDragStart={() => setCurrentDragIndex(icon.id)}
-      onDragEnd={(e, info) => {
-        const point = info.point;
-        let droppedOn: string | null = null;
-
-        for (const [id, ref] of Object.entries(techRefs.current)) {
-          if (ref) {
-            const rect = ref.getBoundingClientRect();
-            if (
-              point.x > rect.left &&
-              point.x < rect.right &&
-              point.y > rect.top &&
-              point.y < rect.bottom
-            ) {
-              droppedOn = id;
-              break;
-            }
-          }
-        }
-
-        if (droppedOn) {
-          setAdded((prev: { [x: string]: number }) => ({
-            ...prev,
-            [droppedOn]: (prev[droppedOn] || 0) + unitAddition,
-          }));
-          setIcons((prev: { id: number; used: boolean }[]) =>
-            prev.map((ic: { id: number; used: boolean }) =>
-              ic.id === icon.id ? { ...ic, used: true } : ic
-            )
-          );
-        } else {
-          x.set(0);
-          y.set(0);
-        }
-
-        setCurrentDragIndex(-1);
-      }}
-    />
   );
 }
