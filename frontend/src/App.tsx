@@ -35,7 +35,7 @@ function App() {
 
   return (
     <div className="min-h-screen grid grid-rows-[auto,1fr] bg-gray-100">
-      <header className="relative bg-primary-800 text-white shadow-md overflow-hidden">
+      <header className="relative bg-primary-800 text-white shadow-md z-50">
         <div
           className="absolute inset-y-0 left-0 bg-emerald-700/60"
           style={{
@@ -45,22 +45,42 @@ function App() {
           aria-hidden
         />
         <div className="relative z-10 container mx-auto px-4 py-4 flex justify-between items-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-xl font-bold text-white"
-          >
-            EnergyProphet
-          </motion.h1>
-          <motion.img
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            src="/icons/EnergyProphet.png"
-            alt="EnergyProphet Logo"
-            className="h-10 w-auto"
-          />
+          <div className="flex items-center gap-3">
+            {/* Logo button (now just toggles nothing, but preserved for future use) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              role="button"
+              tabIndex={0}
+              onClick={() => {
+                // Placeholder: can be used later
+                console.log('Logo button clicked')
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  console.log('Logo button activated')
+                }
+              }}
+              className="rounded-lg p-1 shadow-md hover:bg-white/10 cursor-pointer relative"
+            >
+              <img
+                src="/icons/EnergyProphet.png"
+                alt="EnergyProphet Logo"
+                className="h-10 w-auto"
+              />
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-xl font-bold text-white"
+            >
+              EnergyProphet
+            </motion.h1>
+          </div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
