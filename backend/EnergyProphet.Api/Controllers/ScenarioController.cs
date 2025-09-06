@@ -7,18 +7,18 @@ namespace EnergyProphet.Api.Controllers
     [Route("api/[controller]")]
     public class ScenarioController : ControllerBase
     {
-        private readonly IAService _iaService;
+        private readonly IAIService _aiService;
 
-        public ScenarioController(IAService iaService)
+        public ScenarioController(IAIService aiService)
         {
-            _iaService = iaService;
+            _aiService = aiService;
         }
 
         [HttpPost("analyze")]
         public async Task<IActionResult> Analyze([FromBody] object userScenario)
         {
             // Appel au service IA
-            var analysis = await _iaService.AnalyzeUserScenarioAsync(userScenario);
+            var analysis = await _aiService.AnalyzeScenarioAsync(userScenario);
             return Ok(new { analysis });
         }
     }

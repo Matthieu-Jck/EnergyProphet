@@ -1,20 +1,18 @@
-import { Country } from '../types'
-// ✅ Explicit import of props to fix TS JSX issue
-import Select, { Props as SelectProps, SingleValue } from 'react-select'
+import { Country } from '../types';
+import Select, { Props as SelectProps, SingleValue } from 'react-select';
 
 interface Props {
-  countries: Country[]
-  value: string
-  onChange: (id: string) => void
+  countries: Country[];
+  value: string;
+  onChange: (id: string) => void;
 }
 
-// ✅ Cast Select to properly typed component
 const TypedSelect = Select as unknown as <Option, IsMulti extends boolean = false>(
   props: SelectProps<Option, IsMulti>
-) => JSX.Element
+) => JSX.Element;
 
 export default function CountryPicker({ countries, value, onChange }: Props) {
-  const selectedCountry = countries.find((c) => c.id === value)
+  const selectedCountry = countries.find((c) => c.id === value);
 
   return (
     <TypedSelect<Country, false>
@@ -47,7 +45,7 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           backgroundColor: '#ffffffff',
           color: 'black',
           borderColor: isFocused ? '#0eae00ff' : '#000000ff',
-          padding: '0.1rem 0.25rem', // ⬅️ smaller vertical padding
+          padding: '0.1rem 0.25rem',
           borderRadius: '0.5rem',
           '&:hover': {
             borderColor: '#0eae00ff',
@@ -56,13 +54,20 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           outline: 'none',
           width: '140px',
           fontSize: '0.8rem',
-          minHeight: '26px', // ⬅️ slightly shorter height
+          minHeight: '26px',
           display: 'flex',
           alignItems: 'center',
           textAlign: 'center',
           userSelect: 'none',
           cursor: 'pointer',
-          zIndex: 50,
+          // Hide input cursor
+          'input': {
+            position: 'absolute',
+            width: '0',
+            height: '0',
+            opacity: 0,
+            cursor: 'pointer',
+          },
         }),
         indicatorsContainer: (base) => ({
           ...base,
@@ -72,7 +77,7 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           ...base,
           padding: '0 4px',
           svg: {
-            width: '14px', // ⬅️ smaller arrow
+            width: '14px',
             height: '14px',
           },
         }),
@@ -90,7 +95,7 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           color: '#1F2937',
           width: '140px',
           borderRadius: '0.5rem',
-          zIndex: 9999,
+          zIndex: 100,
           fontSize: '0.8rem',
         }),
         option: (base, { isFocused }) => ({
@@ -106,5 +111,5 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
       menuPosition="absolute"
       menuShouldScrollIntoView={false}
     />
-  )
+  );
 }
