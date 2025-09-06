@@ -1,0 +1,15 @@
+{
+  "name": "energyprophet",
+  "private": true,
+  "scripts": {
+    "install:all": "npm run install:frontend && npm run install:backend",
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "dotnet restore backend/EnergyProphet.Api",
+    "dev:backend": "dotnet watch run --project backend/EnergyProphet.Api",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
