@@ -60,8 +60,7 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           textAlign: 'center',
           userSelect: 'none',
           cursor: 'pointer',
-          // Hide input cursor
-          'input': {
+          input: {
             position: 'absolute',
             width: '0',
             height: '0',
@@ -90,12 +89,15 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           padding: 0,
           userSelect: 'none',
         }),
+        menuPortal: (base) => ({
+          ...base,
+          zIndex: 9999,
+        }),
         menu: (base) => ({
           ...base,
           color: '#1F2937',
           width: '140px',
           borderRadius: '0.5rem',
-          zIndex: 100,
           fontSize: '0.8rem',
         }),
         option: (base, { isFocused }) => ({
@@ -107,8 +109,8 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           cursor: 'pointer',
         }),
       }}
-      menuPortalTarget={document.body}
-      menuPosition="absolute"
+      menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+      menuPosition="fixed"
       menuShouldScrollIntoView={false}
     />
   );
