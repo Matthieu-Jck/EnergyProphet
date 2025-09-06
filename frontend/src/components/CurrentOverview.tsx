@@ -141,15 +141,14 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
   const isBalanced = Math.abs(newTotalTWh - predictedProduction) < EPS;
   const hasChanges = Object.values(addedByTech).some((v) => Math.abs(v) > EPS);
 
-  // Progress bar color switching should only happen once its fill animation completes
+  // Progress bar color switching
   const [progressAnimDone, setProgressAnimDone] = useState(false);
   useEffect(() => {
-    // reset on each progress change so we wait for the next animation end
     setProgressAnimDone(false);
   }, [progress]);
   const progressIsFull = progress >= 100 - EPS;
 
-  // Delay the "balanced" UI by 1s so it lines up with progress animation/percentage
+  // Delay the "balanced" UI by 1s
   const [delayedBalanced, setDelayedBalanced] = useState(false);
   const balanceDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -167,7 +166,7 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
     };
   }, [isBalanced]);
 
-  // Trigger the one-time pulse each time delayedBalanced turns true
+  // Trigger one-time pulse
   useEffect(() => {
     if (!prevDelayedBalancedRef.current && delayedBalanced) {
       setAnalyzePulseKey((k) => k + 1);
@@ -175,7 +174,7 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
     prevDelayedBalancedRef.current = delayedBalanced;
   }, [delayedBalanced]);
 
-  // Close tech popup when clicking outside the open card
+  // Close tech popup when clicking outside
   useEffect(() => {
     const handleGlobalMouseDown = (e: MouseEvent) => {
       const target = e.target as Node;
@@ -199,7 +198,6 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
     setOpenTechId(null);
   };
 
-  // Always (re)select the clicked tech; keep highlight & popup visible
   const handleCardClick = (techId: string) => {
     setOpenTechId(techId);
   };
@@ -245,7 +243,7 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
 
   return (
     <div className="w-full h-full min-h-0 flex flex-col border border-emerald-200 bg-white rounded-2xl shadow-md p-4">
-      {/* Header (menu button removed) */}
+      {/* Header */}
       <motion.h2
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -301,7 +299,7 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
                         animate={{ opacity: 1, scale: 1, y: "-50%" }}
                         exit={{ opacity: 0, scale: 0.9, y: "-50%" }}
                         transition={{ duration: 0.2 }}
-                        className={`absolute top-1/2 ${sideClass} z-[9999]`}
+                        className={`absolute top-1/2 ${sideClass} z-[40]`}
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="relative flex flex-col items-center bg-white border border-emerald-200 rounded-xl shadow-lg p-2 gap-2">
@@ -345,7 +343,7 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
         ))}
       </div>
 
-      {/* ✅ Energy info panel */}
+      {/* Energy info panel */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -376,22 +374,18 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
                   transition={{ duration: 0.18 }}
                   className="flex items-center gap-6 w-full max-w-md"
                 >
-                  {/* Left: icon + name */}
                   <div className="flex flex-col items-center justify-center w-20">
                     <img src={`/icons/${tech.id}.png`} alt={tech.name} className="w-10 h-10 mb-1" />
                     <span className="text-[11px] font-medium text-gray-800">{tech.name}</span>
                   </div>
 
-                  {/* Right: CO₂ + Price */}
                   <div className="flex flex-1 justify-around gap-3">
-                    {/* CO₂ */}
                     <div className={`flex flex-col items-center justify-center rounded-lg shadow-sm ${co2Color} w-16 h-16`}>
                       <span className="text-[10px] font-medium">CO₂</span>
                       <span className="text-xs font-bold">{info.co2} g</span>
                       <span className="text-[9px]">/TWh</span>
                     </div>
 
-                    {/* Price */}
                     <div className="flex flex-col items-center justify-center rounded-lg shadow-sm bg-gray-200 text-gray-900 w-16 h-16">
                       <span className="text-[10px] font-medium">Price</span>
                       <span className="text-xs font-bold">€{info.cost}</span>
@@ -441,7 +435,6 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
           Analyze
         </motion.button>
 
-        {/* Reset icon button — square, right-aligned */}
         <motion.button
           whileHover={hasChanges ? { rotate: 8 } : {}}
           whileTap={hasChanges ? { scale: 0.95, rotate: -8 } : {}}
@@ -455,7 +448,6 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
           <img src="/icons/reset.png" alt="" className="w-6 h-6" />
         </motion.button>
 
-        {/* Disabled analyze tip popup */}
         <AnimatePresence>
           {showAnalyzeTip && (
             <motion.div
@@ -464,11 +456,12 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-full mt-2 left-1/2 -translate-x-1/2 max-w-xl w-[92%] bg-white border border-emerald-200 rounded-lg shadow-lg px-4 py-3 text-center"
+              className="absolute top-full mt-3 left-1/2 -translate-x-1/2 max-w-[300px] w-[92%] bg-white border border-emerald-200 rounded-lg shadow-lg px-4 py-3 text-center z-[10000]"
               role="alert"
             >
-              <div className="text-sm text-emerald-900">
+              <div className="relative text-sm text-emerald-900">
                 Reach the required 2050 production by adjusting the energy mix, then click <span className="font-semibold">Analyze</span> to review your choices.
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-x-[8px] border-x-transparent border-b-[8px] border-b-emerald-200" />
               </div>
             </motion.div>
           )}
@@ -503,7 +496,6 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
           </div>
         </motion.div>
 
-        {/* Progress bar */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

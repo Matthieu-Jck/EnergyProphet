@@ -4,18 +4,18 @@ using System.Text.Json;
 
 namespace EnergyProphet.Api.Services
 {
-    public class IAService
+    public class AIService : IAIService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly string _hfToken;
+        private readonly string? _hfToken;
 
-        public IAService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public AIService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
-            _hfToken = configuration["HF_TOKEN"];
+            _hfToken = configuration["HF_TOKEN"] ?? throw new ArgumentNullException("HF_TOKEN must be configured.");
         }
 
-        public async Task<string> AnalyzeUserScenarioAsync(object userScenario)
+        public async Task<string> AnalyzeScenarioAsync(object userScenario)
         {
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization =
