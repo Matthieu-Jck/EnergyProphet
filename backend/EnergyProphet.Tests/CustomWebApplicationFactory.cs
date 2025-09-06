@@ -10,14 +10,12 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
-            // 🔹 Supprimer toutes les définitions existantes
             var descriptors = services.Where(d => d.ServiceType == typeof(IAIService)).ToList();
             foreach (var d in descriptors)
             {
                 services.Remove(d);
             }
 
-            // 🔹 Ajouter le mock
             var mock = new Mock<IAIService>();
             mock.Setup(s => s.AnalyzeScenarioAsync(It.IsAny<object>()))
                 .ReturnsAsync("Mocked AI analysis response.");

@@ -1,10 +1,12 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{1AE8ACA6-933B-BF2A-3671-3E2EAC007D16}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyProphet.Api", "backend\EnergyProphet.Api\EnergyProphet.Api.csproj", "{AB93EE46-1F37-D7E7-6C44-A459676896EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyProphet.Tests", "backend\EnergyProphet.Tests\EnergyProphet.Tests.csproj", "{D0ACB461-546C-46E3-9A4B-56A8A7123D73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,12 +18,17 @@ Global
 		{AB93EE46-1F37-D7E7-6C44-A459676896EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB93EE46-1F37-D7E7-6C44-A459676896EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB93EE46-1F37-D7E7-6C44-A459676896EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0ACB461-546C-46E3-9A4B-56A8A7123D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0ACB461-546C-46E3-9A4B-56A8A7123D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0ACB461-546C-46E3-9A4B-56A8A7123D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0ACB461-546C-46E3-9A4B-56A8A7123D73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AB93EE46-1F37-D7E7-6C44-A459676896EB} = {1AE8ACA6-933B-BF2A-3671-3E2EAC007D16}
+		{D0ACB461-546C-46E3-9A4B-56A8A7123D73} = {1AE8ACA6-933B-BF2A-3671-3E2EAC007D16}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {42A3AC9C-F5C9-4CAC-BAE2-6310F7CBC5D3}

@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "framer-motion": "^12.23.12",
-    "react-select": "^5.10.2"
-  },
-  "devDependencies": {
-    "@types/react-select": "^5.0.1"
-  }
-}
