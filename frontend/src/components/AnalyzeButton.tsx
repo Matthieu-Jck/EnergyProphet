@@ -5,7 +5,7 @@ interface Props {
   onResult: (analysis: string) => void;
 }
 
-export default function SimulateButton({ userScenario, onResult }: Props) {
+export default function AnalyzeButton({ userScenario, onResult }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
