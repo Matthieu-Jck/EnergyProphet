@@ -5,9 +5,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="data\countries.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\EnergyProphet.Data\EnergyProphet.Data.csproj" />
+      <ProjectReference Include="..\EnergyProphet.Domain\EnergyProphet.Domain.csproj" />
     </ItemGroup>
 </Project>

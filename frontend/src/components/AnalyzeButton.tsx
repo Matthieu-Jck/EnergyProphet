@@ -1,46 +1,62 @@
-import { useState } from "react";
+import React, { useRef } from "react";
+import { motion } from "framer-motion";
+import TooltipPortal from "./TooltipPortal";
+import { TARGET_YEAR } from "../utils/constants";
 
-interface Props {
-  userScenario: any;
-  onResult: (analysis: string) => void;
-}
-
-export default function AnalyzeButton({ userScenario, onResult }: Props) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSimulate = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/scenario/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userScenario),
-      });
-
-      if (!res.ok) throw new Error("Erreur API");
-
-      const data = await res.json();
-      onResult(data.analysis);
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || "Erreur inconnue");
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function AnalyzeButton({
+  delayedBalanced,
+  onAnalyze,
+  onReset,
+  hasChanges,
+  analyzePulseKey,
+  showAnalyzeTip,
+  setShowAnalyzeTip,
+}: {
+  delayedBalanced: boolean;
+  onAnalyze: () => void;
+  onReset: () => void;
+  hasChanges: boolean;
+  analyzePulseKey: number;
+  showAnalyzeTip: boolean;
+  setShowAnalyzeTip: (v: boolean) => void;
+}) {
+  const analyzeBtnRef = useRef<HTMLButtonElement | null>(null);
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <button
-        onClick={handleSimulate}
-        disabled={loading}
-        className="px-4 py-2 rounded-md bg-emerald-600 text-white font-medium shadow hover:bg-emerald-700 transition-colors disabled:opacity-50"
+    <div className="relative flex items-center justify-center mb-2 w-full">
+      <motion.button
+        ref={analyzeBtnRef}
+        key={analyzePulseKey}
+        whileHover={delayedBalanced ? { y: -1 } : undefined}
+        whileTap={delayedBalanced ? { scale: 0.98 } : undefined}
+        animate={delayedBalanced ? { scale: [1, 1.06, 1] } : {}}
+        transition={delayedBalanced ? { duration: 0.35, ease: "easeInOut" } : {}}
+        onClick={delayedBalanced ? onAnalyze : () => setShowAnalyzeTip(true)}
+        aria-disabled={!delayedBalanced}
+        title={!delayedBalanced ? "Finish your prediction to analyze" : undefined}
+        className={`px-5 py-2.5 rounded-lg text-base font-semibold transition-colors transform-gpu ${delayedBalanced ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg" : "bg-emerald-600/40 text-white/80 cursor-not-allowed shadow"
+          }`}
       >
-        {loading ? "Simulating..." : "Simulate"}
+        Analyze
+      </motion.button>
+
+      <button
+        onClick={onReset}
+        aria-label="Reset adjustments"
+        title={hasChanges ? "Reset" : "Nothing to reset"}
+        className={`absolute right-0 inline-flex items-center justify-center w-10 h-10 rounded-lg border border-transparent bg-white/60 transition ${hasChanges ? "opacity-80 hover:shadow-md hover:bg-white shadow-lg" : "opacity-10 pointer-events-none shadow"
+          }`}
+      >
+        <img src="/icons/reset.png" alt="" className="w-6 h-6" />
       </button>
-      {error && <p className="text-red-600 text-sm">{error}</p>}
+
+      <TooltipPortal anchorRef={analyzeBtnRef} visible={showAnalyzeTip}>
+        <div>
+          Reach the required {TARGET_YEAR} production by adjusting the energy mix, then click
+          <span className="font-semibold"> Analyze </span>
+          to review your choices.
+        </div>
+      </TooltipPortal>
     </div>
   );
 }

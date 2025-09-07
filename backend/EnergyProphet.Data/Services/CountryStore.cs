@@ -1,7 +1,7 @@
 using EnergyProphet.Api.Models;
 
 
-namespace EnergyProphet.Api.Data
+namespace EnergyProphet.Data
 {
     public static class CountryStore
     {
@@ -79,7 +79,7 @@ namespace EnergyProphet.Api.Data
             ["bio"] = new Technology { Id = "bio", Name = "Bioenergy", EmissionFactor_tCO2_per_MWh = 0.02, UnitCostUsdPerMWh = 70, ImportTonsPerMWh = 0 },
             ["coal"] = new Technology { Id = "coal", Name = "Coal", EmissionFactor_tCO2_per_MWh = 0.9, UnitCostUsdPerMWh = 40, ImportTonsPerMWh = 0.4, ImportResource = "Coal" },
             ["gas"] = new Technology { Id = "gas", Name = "Gas", EmissionFactor_tCO2_per_MWh = 0.5, UnitCostUsdPerMWh = 50, ImportTonsPerMWh = 0.2, ImportResource = "Gas" },
-            ["oil"] = new Technology { Id = "oil", Name = "Oil", EmissionFactor_tCO2_per_MWh = 0.7, UnitCostUsdPerMWh = 80, ImportTonsPerMWh = 0.3, ImportResource = "Oil" }, // generic fallback assumption
+            ["oil"] = new Technology { Id = "oil", Name = "Oil", EmissionFactor_tCO2_per_MWh = 0.7, UnitCostUsdPerMWh = 80, ImportTonsPerMWh = 0.3, ImportResource = "Oil" },
         };
     }
 }
