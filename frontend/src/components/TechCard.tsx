@@ -62,7 +62,7 @@ export default function TechCard({
       className={`relative grid grid-cols-2 gap-2 border rounded-lg p-2 ${isOpen ? "bg-gray-100" : "bg-white"} hover:bg-gray-100 hover:shadow-sm transition-all duration-200 min-h-[56px] cursor-pointer`}
     >
       <div className="flex flex-col items-center justify-center">
-        <img src={`/icons/${tech.id}.png`} alt={`${tech.name} icon`} className="w-7 h-7 mb-1" loading="lazy" />
+        <img src={`./icons${tech.id}.png`} alt={`${tech.name} icon`} className="w-7 h-7 mb-1" loading="lazy" />
         <span className="text-xs font-medium text-center text-gray-800">{tech.name}</span>
       </div>
 
@@ -99,7 +99,7 @@ export default function TechCard({
                 title="Increase by 20% of target gap"
                 aria-label={`Increase ${tech.name}`}
               >
-                <img src="/icons/plus.png" alt="Increase" className="w-5 h-5" />
+                <img src="./icons/plus.png" alt="Increase" className="w-5 h-5" />
               </button>
 
               <button
@@ -110,7 +110,7 @@ export default function TechCard({
                 title="Decrease by 20% of target gap"
                 aria-label={`Decrease ${tech.name}`}
               >
-                <img src="/icons/minus.png" alt="Decrease" className="w-5 h-5" />
+                <img src="./icons/minus.png" alt="Decrease" className="w-5 h-5" />
               </button>
             </div>
           </motion.div>

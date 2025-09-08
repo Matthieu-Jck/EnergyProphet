@@ -65,7 +65,7 @@ function App() {
               className="rounded-lg p-1 shadow-md hover:bg-white/10 cursor-pointer relative"
             >
               <img
-                src="/icons/EnergyProphet.png"
+                src="./icons/EnergyProphet.png"
                 alt="EnergyProphet Logo"
                 className="h-10 w-auto"
               />

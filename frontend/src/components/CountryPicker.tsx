@@ -26,7 +26,7 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
       formatOptionLabel={(option: Country) => (
         <div className="flex items-center" style={{ userSelect: 'none' }}>
           <img
-            src={`/icons/${option.id.toLowerCase()}.png`}
+            src={`./icons/${option.id.toLowerCase()}.png`}
             alt={`${option.name} flag`}
             className="w-4 h-4 mr-2"
             style={{
