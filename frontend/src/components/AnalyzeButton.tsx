@@ -47,7 +47,7 @@ export default function AnalyzeButton({
         className={`absolute right-0 inline-flex items-center justify-center w-10 h-10 rounded-lg border border-transparent bg-white/60 transition ${hasChanges ? "opacity-80 hover:shadow-md hover:bg-white shadow-lg" : "opacity-10 pointer-events-none shadow"
           }`}
       >
-        <img src="/icons/reset.png" alt="" className="w-6 h-6" />
+        <img src="./icons/reset.png" alt="" className="w-6 h-6" />
       </button>
 
       <TooltipPortal anchorRef={analyzeBtnRef} visible={showAnalyzeTip}>

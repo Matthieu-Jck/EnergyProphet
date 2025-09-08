@@ -29,7 +29,7 @@ export default function InfoPanel({
           return (
             <>
               <div className="flex flex-col items-center justify-center w-20">
-                <img src={`/icons/${tech.id}.png`} alt={tech.name} className="w-10 h-10 mb-1" />
+                <img src={`./icons/${tech.id}.png`} alt={tech.name} className="w-10 h-10 mb-1" />
                 <span className="text-[11px] font-medium text-gray-800">{tech.name}</span>
               </div>
 
