@@ -62,7 +62,7 @@ export default function TechCard({
       className={`relative grid grid-cols-2 gap-2 border rounded-lg p-2 ${isOpen ? "bg-gray-100" : "bg-white"} hover:bg-gray-100 hover:shadow-sm transition-all duration-200 min-h-[56px] cursor-pointer`}
     >
       <div className="flex flex-col items-center justify-center">
-        <img src={`./icons${tech.id}.png`} alt={`${tech.name} icon`} className="w-7 h-7 mb-1" loading="lazy" />
+        <img src={`./icons/${tech.id}.png`} alt={`${tech.name} icon`} className="w-7 h-7 mb-1" loading="lazy" />
         <span className="text-xs font-medium text-center text-gray-800">{tech.name}</span>
       </div>
 
