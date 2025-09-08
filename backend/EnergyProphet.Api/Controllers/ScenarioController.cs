@@ -1,25 +1,27 @@
-using Microsoft.AspNetCore.Mvc;
 using EnergyProphet.Api.Services;
+using Microsoft.AspNetCore.Mvc;
 
-namespace EnergyProphet.Api.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class ScenarioController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ScenarioController : ControllerBase
+    private readonly IDataRepository _dataRepository;
+    private readonly IAIService _aiService;
+
+    public ScenarioController(IDataRepository dataRepository, IAIService aiService)
     {
-        private readonly IAIService _aiService;
+        _dataRepository = dataRepository;
+        _aiService = aiService;
+    }
 
-        public ScenarioController(IAIService aiService)
-        {
-            _aiService = aiService;
-        }
+    [HttpPost("{id}/analyze")]
+    public async Task<IActionResult> AnalyzeScenario(string id, [FromBody] object userChoices, CancellationToken ct)
+    {
+        var country = await _dataRepository.GetCountryAsync(id, ct);
+        if (country == null)
+            return NotFound();
 
-        [HttpPost("analyze")]
-        public async Task<IActionResult> Analyze([FromBody] object userScenario)
-        {
-            // Appel au service IA
-            var analysis = await _aiService.AnalyzeScenarioAsync(userScenario);
-            return Ok(new { analysis });
-        }
+        var analysis = await _aiService.AnalyzeScenarioAsync(country, userChoices, ct);
+        return Ok(analysis);
     }
 }

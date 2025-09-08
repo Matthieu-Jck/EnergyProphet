@@ -1,40 +1,35 @@
 name: Deploy frontend to GitHub Pages
-on:
-push:
-branches: [ main, master ]
 
+on:
+  push:
+    branches: [ main, master ]
 
 permissions:
-pages: write
-id-token: write
-contents: read
-
+  pages: write
+  id-token: write
+  contents: read
 
 jobs:
-build-deploy:
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v4
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-- name: Setup Node
-uses: actions/setup-node@v4
-with:
-node-version: '20'
+      - name: Install deps
+        working-directory: ./frontend
+        run: npm ci
 
+      - name: Build
+        working-directory: ./frontend
+        run: npm run build --if-present
 
-- name: Install deps
-working-directory: ./frontend
-run: npm ci
-
-
-- name: Build
-working-directory: ./frontend
-run: npm run build --if-present
-
-
-- name: Deploy to GitHub Pages
-uses: peaceiris/actions-gh-pages@v4
-with:
-github_token: ${{ secrets.GITHUB_TOKEN }}
-publish_dir: ./frontend/dist
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/dist

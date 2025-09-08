@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for backend-falling-frost-279 on 2025-09-07T10:55:52+02:00
+# fly.toml app configuration file generated for energyprophet on 2025-09-08T20:14:48+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,8 +7,7 @@ app = 'energyprophet'
 primary_region = 'cdg'
 
 [build]
-  dockerfile = "Dockerfile"
-  context = "."
+  dockerfile = 'Dockerfile'
 
 [http_service]
   internal_port = 8080
