@@ -55,7 +55,7 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           outline: 'none',
           width: '140px',
           fontSize: '0.8rem',
-          minHeight: '26px',
+          minHeight: '2.1rem',
           display: 'flex',
           alignItems: 'center',
           textAlign: 'center',
