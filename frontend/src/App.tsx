@@ -34,7 +34,7 @@ function App() {
   }, [selected])
 
   return (
-    <div className="min-h-screen grid grid-rows-[auto,1fr] bg-gray-100">
+    <div className="h-[100svh] md:h-screen grid grid-rows-[auto,1fr] bg-gray-100">
       <header className="relative bg-primary-800 text-white shadow-md z-50">
         <div
           className="absolute inset-y-0 left-0 bg-emerald-700/60"
@@ -95,8 +95,8 @@ function App() {
         </div>
       </header>
 
-      <main className="min-h-0">
-        <div className="mx-auto max-w-3xl w-full h-full px-4 py-4 flex flex-col">
+      <main className="min-h-0 overflow-auto">
+        <div className="mx-auto max-w-3xl w-full h-full px-4 pt-4 pb-[max(env(safe-area-inset-bottom),1rem)] flex flex-col">
           {error && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
