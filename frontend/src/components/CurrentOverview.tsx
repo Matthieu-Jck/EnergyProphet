@@ -303,7 +303,8 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
           </div>
         </div>
 
-        <div className="relative">
+        {/* Progress bar */}
+        <div className="relative sticky bottom-0 pt-2 bg-white/80 backdrop-blur">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}

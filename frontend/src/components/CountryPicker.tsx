@@ -21,6 +21,7 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
       onChange={(option: SingleValue<Country>) =>
         onChange(option ? option.id : '')
       }
+      isSearchable={false}
       getOptionLabel={(option: Country) => option.name}
       getOptionValue={(option: Country) => option.id}
       formatOptionLabel={(option: Country) => (
