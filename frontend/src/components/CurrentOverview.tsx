@@ -8,6 +8,7 @@ import AnalyzeButton from "./AnalyzeButton";
 import TechCard, { DisplayTech } from "./TechCard";
 import { EPS, TARGET_YEAR, ANNUAL_GROWTH_RATE } from "../utils/constants";
 import { nearlyEqual, formatEnergy, clamp } from "../utils/helpers";
+import { useViewportDensity } from "../hooks/useViewportDensity";
 
 interface Props {
   country: Country;
@@ -56,14 +57,23 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
   const stableOrderRef = useRef<string[]>(allTechnologies.map((t) => t.id));
   const baseProduction = country.totalGenerationTWh;
   const years = TARGET_YEAR - 2025;
-  const predictedProduction = useMemo(() => baseProduction * Math.pow(1 + ANNUAL_RATE, years), [baseProduction, years]);
+  const predictedProduction = useMemo(
+    () => baseProduction * Math.pow(1 + ANNUAL_RATE, years),
+    [baseProduction, years]
+  );
   const goalDelta = predictedProduction - baseProduction;
   const unitStepTWh = goalDelta / 5; // 20% steps
 
-  const shareMap: Record<string, number> = useMemo(() => Object.fromEntries(country.technologies.map((t) => [t.id, t.share])), [country.technologies]);
+  const shareMap: Record<string, number> = useMemo(
+    () => Object.fromEntries(country.technologies.map((t) => [t.id, t.share])),
+    [country.technologies]
+  );
 
   const originalGenById: Record<string, number> = useMemo(
-    () => Object.fromEntries(allTechnologies.map((t) => [t.id, (shareMap[t.id] || 0) * baseProduction])),
+    () =>
+      Object.fromEntries(
+        allTechnologies.map((t) => [t.id, (shareMap[t.id] || 0) * baseProduction])
+      ),
     [allTechnologies, shareMap, baseProduction]
   );
 
@@ -81,7 +91,10 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
 
   useEffect(() => setFirstLoad(false), []);
 
-  const totalDelta = useMemo(() => Object.values(addedByTech).reduce((s, v) => s + v, 0), [addedByTech]);
+  const totalDelta = useMemo(
+    () => Object.values(addedByTech).reduce((s, v) => s + v, 0),
+    [addedByTech]
+  );
   const newTotalTWh = baseProduction + totalDelta;
 
   const displayTechs: DisplayTech[] = useMemo(() => {
@@ -93,8 +106,12 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
       const newTWh = Math.max(0, originalTWh + delta);
       const newShare = newTotalTWh > 0 ? newTWh / newTotalTWh : 0;
 
-      const shareColor = newShare > originalShare ? "text-emerald-700" : newShare < originalShare ? "text-red-600" : "text-gray-800";
-      const genColor = newTWh > originalTWh ? "text-emerald-700" : newTWh < originalTWh ? "text-red-600" : "text-gray-800";
+      const shareColor =
+        newShare > originalShare ? "text-emerald-700" : newShare < originalShare ? "text-red-600" : "text-gray-800";
+      const genColor =
+        newTWh > originalTWh ? "text-emerald-700" : newTWh < originalTWh ? "text-red-600" : "text-gray-800";
+      const trend: "up" | "down" | "none" =
+        newShare > originalShare + EPS ? "up" : newShare < originalShare - EPS ? "down" : "none";
 
       return {
         ...base,
@@ -103,6 +120,7 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
         generationTWh: newTWh,
         genColor,
         revealIndex,
+        trend,
       } as const;
     });
   }, [addedByTech, allTechnologies, originalGenById, newTotalTWh, shareMap]);
@@ -206,22 +224,30 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
     [originalGenById, predictedProduction, baseProduction, unitStepTWh]
   );
 
+  const density = useViewportDensity();
+  const dens = <T,>(normal: T, compact: T, ultra: T) =>
+    density === "ultra" ? ultra : density === "compact" ? compact : normal;
+
   return (
-    <div className="w-full h-full min-h-0 flex flex-col border border-emerald-200 bg-white rounded-2xl shadow-md p-4">
+    <div className={`w-full h-full min-h-0 flex flex-col border border-emerald-200 bg-white rounded-2xl shadow-md ${dens(
+      "p-4",
+      "p-3",
+      "p-2"
+    )}`}>
       {/* Header */}
       <motion.h2
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.05 }}
-        className="text-xl font-bold mb-4 text-center text-emerald-800"
+        className={`font-bold text-center text-emerald-800 mb-3 ${dens("text-xl", "text-lg", "text-base")}`}
       >
         Current Energy Mix
       </motion.h2>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 gap-3 mb-2 overflow-visible">
+      <div className={`grid grid-cols-2 ${dens("gap-3", "gap-2", "gap-1")} mb-2 overflow-visible`}>
         {[leftColumn, rightColumn].map((col, colIndex) => (
-          <div key={colIndex} className="flex flex-col gap-3">
+          <div key={colIndex} className={`flex flex-col ${dens("gap-3", "gap-2", "gap-1")}`}>
             {col.map((t) => {
               const isOpen = openTechId === t.id;
               const canIncrease = newTotalTWh < predictedProduction - EPS;
@@ -240,6 +266,7 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
                   forwardedRef={(el) => (techRefs.current[t.id] = el)}
                   colIndex={colIndex}
                   firstLoad={firstLoad}
+                  density={density}
                 />
               );
             })}
@@ -248,10 +275,21 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
       </div>
 
       {/* Info panel */}
-      <div className="border border-emerald-200 rounded-xl p-3 mb-3 h-[85px] flex items-center justify-center bg-emerald-50/30">
+      <div
+        className={`border border-emerald-200 rounded-xl bg-emerald-50/30 flex items-center justify-center ${dens(
+          "p-3 h-[85px]",
+          "p-2 h-[72px]",
+          "p-1 h-[60px]"
+        )} mb-3`}
+      >
         <AnimatePresence mode="wait">
           {openTechId ? (
-            <InfoPanel openTechId={openTechId} techInfo={techInfo} allTechnologies={allTechnologies} />
+            <InfoPanel
+              openTechId={openTechId}
+              techInfo={techInfo}
+              allTechnologies={allTechnologies}
+              density={density}
+            />
           ) : (
             <motion.span
               key="placeholder"
@@ -259,7 +297,11 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.18 }}
-              className="text-gray-400 italic"
+              className={dens(
+                "text-gray-400 italic text-[12px]",
+                "text-gray-400 italic text-[11px]",
+                "text-gray-400 italic text-[10px]"
+              )}
             >
               Click an energy source to see details
             </motion.span>
@@ -268,7 +310,7 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
       </div>
 
       {/* Actions */}
-      <div className="relative flex items-center justify-center mb-2">
+      <div className={`relative flex items-center justify-center ${dens("mb-2", "mb-1.5", "mb-1")}`}>
         <AnalyzeButton
           delayedBalanced={delayedBalanced}
           onAnalyze={handleAnalyzeClick}
@@ -277,41 +319,66 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
           analyzePulseKey={analyzePulseKey}
           showAnalyzeTip={showAnalyzeTip}
           setShowAnalyzeTip={setShowAnalyzeTip}
+          density={density}
         />
       </div>
 
       {/* Bottom section */}
       <div className="mt-auto">
-        <div className="flex items-center justify-center gap-4 text-emerald-800 mb-2">
-          <div className="px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-100 shadow-sm text-center">
-            <div className="text-[11px] font-medium">Current Production</div>
-            <div className="text-lg font-extrabold text-emerald-700">
+        {/* Cards */}
+        <div className={`flex items-center justify-center text-emerald-800 ${dens(
+          "gap-4 mb-2",
+          "gap-3 mb-1.5",
+          "gap-2 mb-1"
+        )}`}>
+          <div
+            className={`${dens(
+              "px-3 py-2",
+              "px-2.5 py-1.5",
+              "px-2 py-1"
+            )} rounded-lg bg-emerald-50 border border-emerald-100 shadow-sm text-center`}
+          >
+            <div className={dens("text-[11px]", "text-[10px]", "text-[9px]")}>Current Production</div>
+            <div className={dens("text-lg", "text-base", "text-sm") + " font-extrabold text-emerald-700"}>
               <AnimatedNumber value={newTotalTWh} format={formatEnergy} duration={1} />
             </div>
           </div>
 
-          <span className="text-xl text-emerald-600" aria-hidden>
+          <span className={dens("text-xl", "text-lg", "text-base") + " text-emerald-600"} aria-hidden>
             →
           </span>
 
-          <div className="px-3 py-2 rounded-lg bg-emerald-100 border border-emerald-200 shadow-sm text-center">
-            <div className="text-[11px] font-medium">Required in {TARGET_YEAR}</div>
-            <div className="text-lg font-extrabold text-emerald-700">
+          <div
+            className={`${dens(
+              "px-3 py-2",
+              "px-2.5 py-1.5",
+              "px-2 py-1"
+            )} rounded-lg bg-emerald-100 border border-emerald-200 shadow-sm text-center`}
+          >
+            <div className={dens("text-[11px]", "text-[10px]", "text-[9px]")}>Required in {TARGET_YEAR}</div>
+            <div className={dens("text-lg", "text-base", "text-sm") + " font-extrabold text-emerald-700"}>
               <AnimatedNumber value={predictedProduction} format={formatEnergy} duration={1} />
             </div>
-            <div className="text-[10px] text-emerald-900/70">2% annual growth</div>
+            <div className={dens("text-[10px]", "text-[9px]", "text-[8px]") + " text-emerald-900/70"}>2% annual growth</div>
           </div>
         </div>
 
-        {/* Progress bar */}
-        <div className="relative sticky bottom-0 pt-2 bg-white/80 backdrop-blur">
+        {/* Progress bar: bigger & closer to bottom in all densities */}
+        <div
+          className="relative sticky bottom-0 z-10 bg-white/80 backdrop-blur"
+          style={{ paddingTop: "0.25rem", paddingBottom: "max(env(safe-area-inset-bottom), 0.25rem)" }}
+        >
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.05 }}
             className="relative"
           >
-            <div className="relative bg-gray-200 rounded-full h-[22px] overflow-hidden">
+            <div className={`relative bg-gray-200 rounded-full overflow-hidden ${dens(
+              "h-[26px]",
+              "h-[22px]",
+              "h-[20px]"
+            )}`}>
               <motion.div
                 className={`${progressIsFull && progressAnimDone ? "bg-emerald-600" : "bg-emerald-400"} h-full`}
                 initial={{ width: 0 }}
@@ -320,7 +387,10 @@ export default function CurrentOverview({ country, onSimulate }: Props) {
                 onAnimationComplete={() => setProgressAnimDone(true)}
                 aria-hidden
               />
-              <div className="absolute inset-0 flex items-center justify-center text-[11px] font-semibold text-white drop-shadow">
+              <div
+                className="absolute inset-0 flex items-center justify-center font-semibold text-white drop-shadow"
+                style={{ fontSize: dens(11, 10, 9) }}
+              >
                 <AnimatedNumber value={progress} format={(v) => `${v.toFixed(0)}%`} duration={1} />
               </div>
             </div>

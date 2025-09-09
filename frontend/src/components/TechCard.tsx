@@ -2,6 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedNumber from "./AnimatedNumber";
 import { CARD_ANIM_DURATION, GRID_BASE_DELAY, GRID_STEP_DELAY } from "../utils/constants";
+import type { Density } from "../hooks/useViewportDensity";
 
 export type DisplayTech = {
   id: string;
@@ -11,6 +12,7 @@ export type DisplayTech = {
   generationTWh: number;
   genColor: string;
   revealIndex: number;
+  trend?: "up" | "down" | "none";
 };
 
 export default function TechCard({
@@ -24,6 +26,7 @@ export default function TechCard({
   forwardedRef,
   colIndex,
   firstLoad,
+  density = "normal",
 }: {
   tech: DisplayTech;
   isOpen: boolean;
@@ -35,7 +38,35 @@ export default function TechCard({
   forwardedRef?: (el: HTMLDivElement | null) => void;
   colIndex: number;
   firstLoad: boolean;
+  density?: Density;
 }) {
+  const pad =
+    density === "ultra" ? "p-2" : density === "compact" ? "p-3" : "p-4";
+  const titleSize =
+    density === "ultra"
+      ? "text-xs"
+      : density === "compact"
+        ? "text-sm"
+        : "text-base";
+  const metaSize =
+    density === "ultra"
+      ? "text-[10px]"
+      : density === "compact"
+        ? "text-[11px]"
+        : "text-[12px]";
+  const btnSize =
+    density === "ultra"
+      ? "h-7 w-7"
+      : density === "compact"
+        ? "h-8 w-8"
+        : "h-9 w-9";
+  const iconSize =
+    density === "ultra"
+      ? "w-5 h-5"
+      : density === "compact"
+        ? "w-6 h-6"
+        : "w-7 h-7";
+
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (revealIndex: number) => ({
@@ -59,22 +90,63 @@ export default function TechCard({
       animate="visible"
       ref={forwardedRef}
       onClick={onOpen}
-      className={`relative grid grid-cols-2 gap-2 border rounded-lg p-2 ${isOpen ? "bg-gray-100" : "bg-white"} hover:bg-gray-100 hover:shadow-sm transition-all duration-200 min-h-[56px] cursor-pointer`}
+      className={`relative grid grid-cols-2 gap-2 border rounded-lg ${pad} ${isOpen ? "bg-gray-100" : "bg-white"
+        } hover:bg-gray-100 hover:shadow-sm transition-all duration-200 min-h-[56px] cursor-pointer select-none`}
     >
+      {/* left side */}
       <div className="flex flex-col items-center justify-center">
-        <img src={`./icons/${tech.id}.png`} alt={`${tech.name} icon`} className="w-7 h-7 mb-1" loading="lazy" />
-        <span className="text-xs font-medium text-center text-gray-800">{tech.name}</span>
+        <img
+          src={`./icons/${tech.id}.png`}
+          alt={`${tech.name} icon`}
+          className={`${iconSize} mb-1`}
+          loading="lazy"
+        />
+        <span
+          className={`${titleSize} font-medium text-center text-gray-800 leading-tight`}
+        >
+          {tech.name}
+        </span>
       </div>
 
+      {/* right side */}
       <div className="flex flex-col items-center justify-center border-l border-emerald-100 pl-1">
-        <span className={`font-semibold text-base text-center transition-colors duration-300 ${tech.shareColor}`}>
-          <AnimatedNumber value={tech.share * 100} format={(v) => `${v.toFixed(0)}%`} duration={1} />
-        </span>
-        <span className={`text-xs text-center transition-colors duration-300 ${tech.genColor}`}>
-          <AnimatedNumber value={tech.generationTWh} format={(v) => `${Math.round(v)} TWh`} duration={1} />
+        <div className="flex items-center gap-1">
+          <span
+            className={`font-semibold ${titleSize} text-center text-black`}
+          >
+            <AnimatedNumber
+              value={tech.share * 100}
+              format={(v) => `${v.toFixed(0)}%`}
+              duration={1}
+            />
+          </span>
+          {tech.trend === "up" && (
+            <span
+              className="text-green-600 text-xs leading-none"
+              aria-hidden
+            >
+              ▲
+            </span>
+          )}
+          {tech.trend === "down" && (
+            <span className="text-red-600 text-xs leading-none" aria-hidden>
+              ▼
+            </span>
+          )}
+        </div>
+
+        <span
+          className={`${metaSize} text-center transition-colors duration-300 ${tech.genColor}`}
+        >
+          <AnimatedNumber
+            value={tech.generationTWh}
+            format={(v) => `${Math.round(v)} TWh`}
+            duration={1}
+          />
         </span>
       </div>
 
+      {/* controls */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -86,31 +158,53 @@ export default function TechCard({
             className={`absolute top-1/2 ${sideClass} z-[10]`}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative flex flex-col items-center bg-white border border-emerald-200 rounded-xl shadow-lg p-2 gap-2">
-              <div className={`pointer-events-none absolute top-1/2 -translate-y-1/2 ${colIndex === 0 ? "-left-2" : "-right-2"}`}>
-                <div className={`${colIndex === 0 ? "border-y-[8px] border-y-transparent border-r-[8px] border-r-emerald-500" : "border-y-[8px] border-y-transparent border-l-[8px] border-l-emerald-500"}`} />
+            <div className="relative flex flex-col items-center bg-white border border-emerald-200 rounded-xl shadow-lg p-2 gap-2 select-none">
+              <div
+                className={`pointer-events-none absolute top-1/2 -translate-y-1/2 ${colIndex === 0 ? "-left-2" : "-right-2"
+                  }`}
+              >
+                <div
+                  className={`${colIndex === 0
+                      ? "border-y-[8px] border-y-transparent border-r-[8px] border-r-emerald-500"
+                      : "border-y-[8px] border-y-transparent border-l-[8px] border-l-emerald-500"
+                    }`}
+                />
               </div>
 
               <button
                 type="button"
                 onClick={onIncrease}
                 disabled={!canIncrease}
-                className={`w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center hover:shadow-sm transition ${!canIncrease ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-50"}`}
+                className={`${btnSize} rounded-lg border border-gray-200 flex items-center justify-center hover:shadow-sm transition ${!canIncrease
+                    ? "opacity-40 cursor-not-allowed"
+                    : "hover:bg-gray-50"
+                  }`}
                 title="Increase by 20% of target gap"
                 aria-label={`Increase ${tech.name}`}
               >
-                <img src="./icons/plus.png" alt="Increase" className="w-5 h-5" />
+                <img
+                  src="./icons/plus.png"
+                  alt="Increase"
+                  className={`${density === "ultra" ? "w-3 h-3" : "w-4 h-4"}`}
+                />
               </button>
 
               <button
                 type="button"
                 onClick={onDecrease}
                 disabled={!canDecrease}
-                className={`w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center hover:shadow-sm transition ${!canDecrease ? "opacity-40 cursor-not-allowed" : "hover:bg-gray-50"}`}
+                className={`${btnSize} rounded-lg border border-gray-200 flex items-center justify-center hover:shadow-sm transition ${!canDecrease
+                    ? "opacity-40 cursor-not-allowed"
+                    : "hover:bg-gray-50"
+                  }`}
                 title="Decrease by 20% of target gap"
                 aria-label={`Decrease ${tech.name}`}
               >
-                <img src="./icons/minus.png" alt="Decrease" className="w-5 h-5" />
+                <img
+                  src="./icons/minus.png"
+                  alt="Decrease"
+                  className={`${density === "ultra" ? "w-3 h-3" : "w-4 h-4"}`}
+                />
               </button>
             </div>
           </motion.div>
