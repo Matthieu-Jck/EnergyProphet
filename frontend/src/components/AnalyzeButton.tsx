@@ -29,26 +29,26 @@ export default function AnalyzeButton({
     density === "ultra"
       ? "px-3 py-1.5"
       : density === "compact"
-      ? "px-4 py-2"
-      : "px-5 py-2.5";
+        ? "px-4 py-2"
+        : "px-5 py-2.5";
   const analyzeText =
     density === "ultra"
       ? "text-sm"
       : density === "compact"
-      ? "text-[15px]"
-      : "text-base";
+        ? "text-[15px]"
+        : "text-base";
   const resetSize =
     density === "ultra"
       ? "w-7 h-7"
       : density === "compact"
-      ? "w-9 h-9"
-      : "w-10 h-10";
+        ? "w-9 h-9"
+        : "w-10 h-10";
   const resetIcon =
     density === "ultra"
       ? "w-4 h-4"
       : density === "compact"
-      ? "w-5 h-5"
-      : "w-6 h-6";
+        ? "w-5 h-5"
+        : "w-6 h-6";
 
   return (
     <div className="relative flex items-center justify-center mb-2 w-full">
@@ -66,11 +66,10 @@ export default function AnalyzeButton({
         title={
           !delayedBalanced ? "Finish your prediction to analyze" : undefined
         }
-        className={`${analyzePad} rounded-lg ${analyzeText} font-semibold transition-colors transform-gpu ${
-          delayedBalanced
+        className={`${analyzePad} rounded-lg ${analyzeText} font-semibold transition-colors transform-gpu ${delayedBalanced
             ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg"
             : "bg-emerald-600/40 text-white/80 cursor-not-allowed shadow"
-        }`}
+          }`}
       >
         Analyze
       </motion.button>
@@ -79,17 +78,20 @@ export default function AnalyzeButton({
         onClick={onReset}
         aria-label="Reset adjustments"
         title={hasChanges ? "Reset" : "Nothing to reset"}
-        className={`absolute right-0 inline-flex items-center justify-center ${resetSize} rounded-lg border border-transparent bg-white/60 transition ${
-          hasChanges
+        className={`absolute right-0 inline-flex items-center justify-center ${resetSize} rounded-lg border border-transparent bg-white/60 transition ${hasChanges
             ? "opacity-80 hover:shadow-md hover:bg-white shadow-lg"
             : "opacity-10 pointer-events-none shadow"
-        }`}
+          }`}
       >
         <img src="./icons/reset.png" alt="" className={resetIcon} />
       </button>
 
-      <TooltipPortal anchorRef={analyzeBtnRef} visible={showAnalyzeTip}>
-        <div>
+      <TooltipPortal
+        anchorRef={analyzeBtnRef}
+        visible={showAnalyzeTip}
+        onClose={() => setShowAnalyzeTip(false)}
+      >
+        <div className="text-center">
           Reach the required {TARGET_YEAR} production by adjusting the energy
           mix, then click <span className="font-semibold">Analyze</span> to
           review your choices.

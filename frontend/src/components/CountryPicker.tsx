@@ -12,6 +12,22 @@ const TypedSelect = Select as unknown as <Option, IsMulti extends boolean = fals
   props: SelectProps<Option, IsMulti>
 ) => JSX.Element;
 
+const densityStyles = {
+  normal: {
+    control: { width: 140, fontSize: "0.8rem", minHeight: "2.1rem" },
+    option: { fontSize: "0.8rem" },
+  },
+  compact: {
+    control: { width: 120, fontSize: "0.75rem", minHeight: "1.9rem" },
+    option: { fontSize: "0.75rem" },
+  },
+  ultra: {
+    control: { width: 110, fontSize: "0.7rem", minHeight: "1.7rem" },
+    option: { fontSize: "0.7rem" },
+  },
+} as const;
+
+
 export default function CountryPicker({ countries, value, onChange }: Props) {
   const selectedCountry = countries.find((c) => c.id === value);
 

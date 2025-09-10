@@ -12,8 +12,8 @@ export function useViewportDensity(): Density {
   useEffect(() => {
     const calc = () => {
       const h = (window.visualViewport?.height ?? window.innerHeight) || 0;
-      if (h <= 700) setDensity("ultra");
-      else if (h <= 820) setDensity("compact");
+      if (h <= 710) setDensity("ultra");
+      else if (h <= 815) setDensity("compact");
       else setDensity("normal");
     };
     calc();
