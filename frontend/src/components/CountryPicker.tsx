@@ -5,6 +5,7 @@ interface Props {
   countries: Country[];
   value: string;
   onChange: (id: string) => void;
+  density?: "normal" | "compact" | "ultra";
 }
 
 const TypedSelect = Select as unknown as <Option, IsMulti extends boolean = false>(
