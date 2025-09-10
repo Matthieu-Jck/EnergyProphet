@@ -41,7 +41,7 @@ export default function TechCard({
   density?: Density;
 }) {
   const pad =
-    density === "ultra" ? "p-2" : density === "compact" ? "p-3" : "p-4";
+    density === "ultra" ? "p-2" : density === "compact" ? "p-3" : "p-3";
   const titleSize =
     density === "ultra"
       ? "text-xs"

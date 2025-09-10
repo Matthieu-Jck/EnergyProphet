@@ -1,9 +1,10 @@
 import axios from "axios";
 import type { Country } from "./types";
 
-// Use environment variable if available, fallback to Fly.io URL
+const isDev = import.meta.env.DEV;
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://energyprophet.fly.dev",
+  baseURL: import.meta.env.VITE_API_URL || (isDev ? "http://localhost:8080" : "https://energyprophet.fly.dev"),
 });
 
 export async function getCountries(): Promise<Country[]> {
