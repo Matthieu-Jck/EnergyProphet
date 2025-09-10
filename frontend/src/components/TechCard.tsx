@@ -41,31 +41,31 @@ export default function TechCard({
   density?: Density;
 }) {
   const pad =
-    density === "ultra" ? "p-2" : density === "compact" ? "p-3" : "p-3";
+    density === "ultra" ? "p-2" : density === "compact" ? "p-2" : "p-2";
   const titleSize =
     density === "ultra"
       ? "text-xs"
       : density === "compact"
         ? "text-sm"
-        : "text-base";
+        : "text-sm";
   const metaSize =
     density === "ultra"
-      ? "text-[10px]"
+      ? "text-[9px]"
       : density === "compact"
-        ? "text-[11px]"
-        : "text-[12px]";
+        ? "text-[9px]"
+        : "text-[10px]";
   const btnSize =
     density === "ultra"
       ? "h-7 w-7"
       : density === "compact"
-        ? "h-8 w-8"
-        : "h-9 w-9";
+        ? "h-7 w-7"
+        : "h-8 w-8";
   const iconSize =
     density === "ultra"
       ? "w-5 h-5"
       : density === "compact"
-        ? "w-6 h-6"
-        : "w-7 h-7";
+        ? "w-5 h-5"
+        : "w-6 h-6";
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },

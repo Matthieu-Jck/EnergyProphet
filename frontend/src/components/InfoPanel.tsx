@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import type { Density } from "../hooks/useViewportDensity";
 
@@ -39,16 +38,21 @@ export default function InfoPanel({
 
           return (
             <>
+              {/* Technology name + icon */}
               <div className={`flex flex-col items-center justify-center ${dens("w-20", "w-16", "w-14")}`}>
                 <img
                   src={`./icons/${tech.id}.png`}
                   alt={tech.name}
                   className={`${dens("w-10 h-10 mb-1", "w-9 h-9 mb-1", "w-8 h-8 mb-0.5")}`}
                 />
-                <span className={`${dens("text-[11px]", "text-[10px]", "text-[9px]")} font-medium text-gray-800`}>{tech.name}</span>
+                <span className={`${dens("text-[11px]", "text-[10px]", "text-[9px]")} font-medium text-gray-800`}>
+                  {tech.name}
+                </span>
               </div>
 
+              {/* Info squares */}
               <div className={`flex flex-1 justify-around ${dens("gap-3", "gap-2", "gap-2")}`}>
+                {/* CO₂ */}
                 <div
                   className={`flex flex-col items-center justify-center rounded-lg shadow-sm ${co2Color} ${dens(
                     "w-16 h-16",
@@ -61,6 +65,7 @@ export default function InfoPanel({
                   <span className={`${dens("text-[9px]", "text-[8px]", "text-[7px]")}`}>/kWh</span>
                 </div>
 
+                {/* Price */}
                 <div
                   className={`flex flex-col items-center justify-center rounded-lg shadow-sm bg-gray-200 text-gray-900 ${dens(
                     "w-16 h-16",
@@ -71,6 +76,20 @@ export default function InfoPanel({
                   <span className={`${dens("text-[10px]", "text-[9px]", "text-[8px]")} font-medium`}>Price</span>
                   <span className={`${dens("text-sm", "text-xs", "text-[11px]")} font-bold`}>€{info.cost}</span>
                   <span className={`${dens("text-[9px]", "text-[8px]", "text-[7px]")}`}>/TWh</span>
+                </div>
+
+                {/* Controllability */}
+                <div
+                  className={`flex flex-col items-center justify-center rounded-lg shadow-sm ${
+                    info.controllable ? "bg-blue-200 text-blue-900" : "bg-red-200 text-red-900"
+                  } ${dens("w-16 h-16", "w-14 h-14", "w-12 h-12")}`}
+                >
+                  <span className={`${dens("text-[10px]", "text-[9px]", "text-[8px]")} font-medium`}>
+                    Controlled
+                  </span>
+                  <span className={`${dens("text-sm", "text-xs", "text-[11px]")} font-bold`}>
+                    {info.controllable ? "Yes" : "No"}
+                  </span>
                 </div>
               </div>
             </>

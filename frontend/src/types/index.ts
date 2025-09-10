@@ -1,9 +1,12 @@
 export interface TechnologyEntry {
-id: string;
-name?: string;
-share?: number; // 0..1
+  id: string;
+  name: string;
+  share?: number; // 0..1
+  green: boolean;
+  controllable: boolean;
+  co2: number;
+  cost: number;
 }
-
 export interface Country {
 id: string;
 name: string;
