@@ -1,6 +1,3 @@
-using System.Text.Json.Serialization;
-
-
 namespace EnergyProphet.Api.Models;
 
 

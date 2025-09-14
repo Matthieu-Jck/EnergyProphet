@@ -1,9 +1,10 @@
 using EnergyProphet.Api.Models;
 
-namespace EnergyProphet.Api.Services
+public interface IAIService
 {
-    public interface IAIService
-    {
-        Task<string> AnalyzeScenarioAsync(Country country, object userChoices, CancellationToken ct = default);
-    }
+    Task<AnalysisResultDto> AnalyzeScenarioAsync(
+        Country country,
+        IEnumerable<UserChangeDto> userChoices,
+        CancellationToken ct = default
+    );
 }
