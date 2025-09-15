@@ -13,3 +13,11 @@ name: string;
 totalGenerationTWh: number;
 technologies: Array<{ id: string; share: number }>;
 }
+
+export type UserChange = {
+  id: string;
+  prevShare?: number; // 0..1
+  prevTWh?: number;
+  newShare: number;
+  newTWh: number;
+};

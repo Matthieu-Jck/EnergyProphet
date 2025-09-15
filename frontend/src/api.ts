@@ -4,7 +4,8 @@ import type { Country } from "./types";
 const isDev = import.meta.env.DEV;
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || (isDev ? "http://localhost:8080" : "https://energyprophet.fly.dev"),
+  baseURL:
+    import.meta.env.VITE_API_URL || (isDev ? "https://localhost:5001" : "https://energyprophet.fly.dev"),
 });
 
 export async function getCountries(): Promise<Country[]> {
@@ -17,5 +18,19 @@ export async function getCountry(id: string): Promise<Country> {
   return res.data;
 }
 
-const api = { getCountries, getCountry };
+// payload shape we send when the user clicks Analyze
+export type UserChange = {
+  id: string;
+  prevShare?: number; // 0..1
+  prevTWh?: number;
+  newShare: number; // 0..1
+  newTWh: number;
+};
+
+export async function sendAnalysis(countryId: string, changes: UserChange[]) {
+  const res = await apiClient.post(`/api/countries/${countryId}/analysis`, changes);
+  return res.data;
+}
+
+const api = { getCountries, getCountry, sendAnalysis };
 export default api;

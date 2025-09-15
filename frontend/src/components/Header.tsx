@@ -216,7 +216,7 @@ export default function Header({ countries, value, onChange, density = 'normal' 
                                             <p className='text-center'>
                                                 This website is provided for educational purposes only. It comes with no warranty.
                                                 By using EnergyProphet, you agree that data may be incomplete or inaccurate and should
-                                                not be used for critical decisions. © 2024 Matthieu Jacques.
+                                                not be used for critical decisions. © 2025 Matthieu Jacques.
                                             </p>
                                         ),
                                     },
@@ -254,7 +254,7 @@ export default function Header({ countries, value, onChange, density = 'normal' 
                                 <a className="footer_licence flex items-center gap-2 hover:underline" href="https://github.com/Matthieu-Jck/EnergyProphet/blob/main/LICENSE" target="_blank">
                                     <span>© Matthieu Jacques</span>
                                     <img src="./icons/open-source-icon.svg" alt="license" width="20px" height="20px" />
-                                    <span>MIT license 2024</span>
+                                    <span>MIT license 2025</span>
                                 </a>
                                 <a className="flex items-center gap-2 hover:underline" href="https://github.com/matthieu-jck/EnergyProphet" target="_blank">
                                     <span>See source code on my GitHub</span>

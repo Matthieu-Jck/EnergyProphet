@@ -8,7 +8,9 @@ export default function InfoPanel({
   density = "normal",
 }: {
   openTechId: string | null;
-  techInfo: Record<string, { green: boolean; controllable: boolean; co2: number; cost: number }>;
+  techInfo: Record<string, {
+    renewable: string; green: boolean; controllable: boolean; co2: number; cost: number 
+}>;
   allTechnologies: Array<{ id: string; name: string }>;
   density?: Density;
 }) {
@@ -31,10 +33,10 @@ export default function InfoPanel({
             co2 < 50
               ? "bg-emerald-200 text-emerald-900"
               : co2 < 200
-              ? "bg-yellow-200 text-yellow-900"
-              : co2 < 500
-              ? "bg-orange-200 text-orange-900"
-              : "bg-amber-800 text-white";
+                ? "bg-yellow-200 text-yellow-900"
+                : co2 < 500
+                  ? "bg-orange-200 text-orange-900"
+                  : "bg-amber-800 text-white";
 
           return (
             <>
@@ -65,7 +67,7 @@ export default function InfoPanel({
                   <span className={`${dens("text-[9px]", "text-[8px]", "text-[7px]")}`}>/kWh</span>
                 </div>
 
-                {/* Price */}
+                {/* Price 
                 <div
                   className={`flex flex-col items-center justify-center rounded-lg shadow-sm bg-gray-200 text-gray-900 ${dens(
                     "w-16 h-16",
@@ -76,13 +78,27 @@ export default function InfoPanel({
                   <span className={`${dens("text-[10px]", "text-[9px]", "text-[8px]")} font-medium`}>Price</span>
                   <span className={`${dens("text-sm", "text-xs", "text-[11px]")} font-bold`}>€{info.cost}</span>
                   <span className={`${dens("text-[9px]", "text-[8px]", "text-[7px]")}`}>/TWh</span>
+                </div> */}
+
+                {/* Renewable */}
+                <div
+                  className={`flex flex-col items-center justify-center rounded-lg shadow-sm ${info.renewable === "yes"
+                      ? "bg-emerald-200 text-emerald-900"
+                      : info.renewable === "no"
+                        ? "bg-red-200 text-red-900"
+                        : "bg-yellow-200 text-yellow-900"
+                    } ${dens("w-16 h-16", "w-14 h-14", "w-12 h-12")}`}
+                >
+                  <span className={`${dens("text-[10px]", "text-[9px]", "text-[8px]")} font-medium`}>Renewable</span>
+                  <span className={`${dens("text-sm", "text-xs", "text-[11px]")} font-bold`}>
+                    {info.renewable === "yes" ? "Yes" : info.renewable === "no" ? "No" : "Debated"}
+                  </span>
                 </div>
 
                 {/* Controllability */}
                 <div
-                  className={`flex flex-col items-center justify-center rounded-lg shadow-sm ${
-                    info.controllable ? "bg-blue-200 text-blue-900" : "bg-red-200 text-red-900"
-                  } ${dens("w-16 h-16", "w-14 h-14", "w-12 h-12")}`}
+                  className={`flex flex-col items-center justify-center rounded-lg shadow-sm ${info.controllable ? "bg-blue-200 text-blue-900" : "bg-red-200 text-red-900"
+                    } ${dens("w-16 h-16", "w-14 h-14", "w-12 h-12")}`}
                 >
                   <span className={`${dens("text-[10px]", "text-[9px]", "text-[8px]")} font-medium`}>
                     Controlled
