@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using EnergyProphet.Api.Models;
 
 namespace EnergyProphet.Api.Services
@@ -89,44 +82,13 @@ namespace EnergyProphet.Api.Services
                 Warnings = new List<string>()
             };
 
-            var prompt = BuildIntegerOnlyPrompt(summary, enriched, computedNewTotalTWh);
+            var prompt = ScenarioPromptBuilder.BuildPrompt(country, summary);
 
             var aiText = await CallGoogleAsync(prompt, ct) ?? string.Empty;
             const int MaxChars = 20000;
             if (aiText.Length > MaxChars) aiText = aiText.Substring(0, MaxChars) + "...(truncated)";
 
             return new AnalysisResultDto { Summary = summary, AnalysisText = aiText };
-        }
-
-        private string BuildIntegerOnlyPrompt(AnalysisSummaryDto summary, List<EnrichedChangeDto> changes, long totalTWh)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine($"Complete 2050 electricity generation plan for {summary.CountryName} (id: {summary.CountryId}).");
-            sb.AppendLine($"TOTAL (integer TWh): {totalTWh.ToString("N0", CultureInfo.InvariantCulture)} TWh.");
-            sb.AppendLine();
-            sb.AppendLine("The following list contains all technologies and their integer TWh values for 2050. THESE VALUES REPRESENT THE COMPLETE PLAN (sum of NewTWh equals the TOTAL above). DO NOT INFER any remaining percentage or missing generation — do not compute percentages.");
-            sb.AppendLine();
-
-            foreach (var c in changes)
-            {
-                var prev = Convert.ToInt64(Math.Round(c.PrevTWh, 0));
-                var neu = Convert.ToInt64(Math.Round(c.NewTWh, 0));
-                var d = Convert.ToInt64(Math.Round(c.DeltaTWh, 0));
-                sb.Append($"- {c.Name ?? c.Id} (id: {c.Id}): Prev {prev} TWh -> New {neu} TWh (Δ {d} TWh).");
-                if (c.DeltaCo2Tonnes.HasValue)
-                {
-                    var co2 = Convert.ToInt64(Math.Round(c.DeltaCo2Tonnes.Value, 0));
-                    sb.Append($" Estimated ΔCO2: {co2} tonnes (EF: {c.EmissionFactor?.ToString(CultureInfo.InvariantCulture) ?? "N/A"} {c.EmissionFactorUnit}).");
-                }
-                sb.AppendLine();
-            }
-
-            sb.AppendLine();
-            sb.AppendLine("Important instructions for the model:");
-            sb.AppendLine("- Use only the integer TWh values above for calculations and descriptions.");
-            sb.AppendLine("- Do NOT convert to or mention percent shares or 'remaining X%' — the plan is complete.");
-            sb.AppendLine("- If you detect internal inconsistencies (e.g., negative totals), state them and how you resolved them.");
-            return sb.ToString();
         }
 
         private async Task<string?> CallGoogleAsync(string prompt, CancellationToken ct)
@@ -142,11 +104,11 @@ namespace EnergyProphet.Api.Services
             {
                 ["contents"] = new object[]
                 {
-                    new Dictionary<string, object>
-                    {
-                        ["role"] = "user",
-                        ["parts"] = new object[] { new Dictionary<string, object> { ["text"] = prompt } }
-                    }
+            new Dictionary<string, object>
+            {
+                ["role"] = "user",
+                ["parts"] = new object[] { new Dictionary<string, object> { ["text"] = prompt } }
+            }
                 },
                 ["generationConfig"] = new Dictionary<string, object>
                 {
@@ -162,17 +124,35 @@ namespace EnergyProphet.Api.Services
             using var resp = await client.PostAsync(url, content, ct);
             var body = await resp.Content.ReadAsStringAsync(ct);
 
+            // 🔎 Log the raw API response
+            Console.WriteLine($"[AIService] Raw Google response: {body}");
+
             try
             {
                 using var doc = JsonDocument.Parse(body);
                 var extracted = ExtractFromGoogleResponse(doc.RootElement);
+
+                if (string.IsNullOrWhiteSpace(extracted))
+                {
+                    Console.WriteLine("[AIService] Extracted text is EMPTY.");
+                }
+                else
+                {
+                    var preview = extracted.Length > 2000
+                        ? extracted.Substring(0, 2000) + "...(truncated)"
+                        : extracted;
+                    Console.WriteLine($"[AIService] Extracted AI text: {preview}");
+                }
+
                 return string.IsNullOrWhiteSpace(extracted) ? body : extracted;
             }
-            catch (JsonException)
+            catch (JsonException jex)
             {
+                Console.WriteLine($"[AIService] Failed to parse JSON response: {jex.Message}");
                 return body;
             }
         }
+
 
         private string ExtractFromGoogleResponse(JsonElement root)
         {
