@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-            "https://Matthieu-Jck.github.io", // GitHub Pages site
+            "https://matthieu-jck.github.io", // GitHub Pages site
             "http://localhost:5173",          // Vite dev
             "http://localhost:3000"           // CRA dev
         )

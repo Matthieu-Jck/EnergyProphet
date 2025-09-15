@@ -20,9 +20,9 @@ public class ScenarioController : ControllerBase
 
     [HttpPost("{id}/analysis")]
     public async Task<IActionResult> AnalyzeCountryScenario(
-    [FromRoute] string id,
-    [FromBody] IEnumerable<UserChangeDto>? changes,
-    CancellationToken ct)
+        [FromRoute] string id,
+        [FromBody] IEnumerable<UserChangeDto>? changes,
+        CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(id))
             return BadRequest(new { message = "Country id is required." });
@@ -36,15 +36,29 @@ public class ScenarioController : ControllerBase
 
         try
         {
-            _logger.LogInformation("Starting analysis for country {CountryId} with {ChangeCount} changes", id, changes.Count());
+            _logger.LogInformation(
+                "Starting analysis for country {CountryId} with {ChangeCount} changes",
+                id, changes.Count());
 
             _logger.LogDebug("Incoming changes: {Changes}", JsonSerializer.Serialize(changes));
 
             var result = await _aiService.AnalyzeScenarioAsync(country, changes, ct);
 
+            if (string.IsNullOrWhiteSpace(result.AnalysisText))
+            {
+                _logger.LogWarning("AI analysis returned an EMPTY response for country {CountryId}", id);
+            }
+            else
+            {
+                var preview = result.AnalysisText.Length > 2000
+                    ? result.AnalysisText.Substring(0, 2000) + "...(truncated)"
+                    : result.AnalysisText;
+
+                _logger.LogDebug("AI analysis result for {CountryId}: {AnalysisText}", id, preview);
+            }
+
             _logger.LogInformation("Completed analysis for country {CountryId}", id);
 
-            // Return the DTO directly — it has both summary and analysis text
             return Ok(result);
         }
         catch (OperationCanceledException)
@@ -58,5 +72,4 @@ public class ScenarioController : ControllerBase
             return Problem(detail: "AI analysis failed. See server logs for details.", statusCode: 500);
         }
     }
-
 }

@@ -74,12 +74,12 @@ namespace EnergyProphet.Data
         {
             ["hydro"] = new Technology { Id = "hydro", Name = "Hydro", EmissionFactor_tCO2_per_MWh = 0.01, UnitCostUsdPerMWh = 50, ImportTonsPerMWh = 0 },
             ["nuclear"] = new Technology { Id = "nuclear", Name = "Nuclear", EmissionFactor_tCO2_per_MWh = 0.01, UnitCostUsdPerMWh = 60, ImportTonsPerMWh = 0 },
-            ["solar"] = new Technology { Id = "solar", Name = "Solar", EmissionFactor_tCO2_per_MWh = 0.02, UnitCostUsdPerMWh = 55, ImportTonsPerMWh = 0 },
             ["wind"] = new Technology { Id = "wind", Name = "Wind", EmissionFactor_tCO2_per_MWh = 0.01, UnitCostUsdPerMWh = 60, ImportTonsPerMWh = 0 },
+            ["solar"] = new Technology { Id = "solar", Name = "Solar", EmissionFactor_tCO2_per_MWh = 0.02, UnitCostUsdPerMWh = 55, ImportTonsPerMWh = 0 },
             ["bio"] = new Technology { Id = "bio", Name = "Bioenergy", EmissionFactor_tCO2_per_MWh = 0.02, UnitCostUsdPerMWh = 70, ImportTonsPerMWh = 0 },
-            ["coal"] = new Technology { Id = "coal", Name = "Coal", EmissionFactor_tCO2_per_MWh = 0.9, UnitCostUsdPerMWh = 40, ImportTonsPerMWh = 0.4, ImportResource = "Coal" },
             ["gas"] = new Technology { Id = "gas", Name = "Gas", EmissionFactor_tCO2_per_MWh = 0.5, UnitCostUsdPerMWh = 50, ImportTonsPerMWh = 0.2, ImportResource = "Gas" },
             ["oil"] = new Technology { Id = "oil", Name = "Oil", EmissionFactor_tCO2_per_MWh = 0.7, UnitCostUsdPerMWh = 80, ImportTonsPerMWh = 0.3, ImportResource = "Oil" },
+            ["coal"] = new Technology { Id = "coal", Name = "Coal", EmissionFactor_tCO2_per_MWh = 0.9, UnitCostUsdPerMWh = 40, ImportTonsPerMWh = 0.4, ImportResource = "Coal" },
         };
     }
 }
