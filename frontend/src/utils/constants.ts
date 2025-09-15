@@ -19,12 +19,12 @@ export type Technology = {
 export const TECHNOLOGIES: Technology[] = [
   { id: "hydro", name: "Hydro" },
   { id: "nuclear", name: "Nuclear" },
-  { id: "solar", name: "Solar" },
   { id: "wind", name: "Wind" },
+  { id: "solar", name: "Solar" },
   { id: "biomass", name: "Biomass" },
-  { id: "coal", name: "Coal" },
-  { id: "oil", name: "Oil" },
   { id: "gas", name: "Gas" },
+  { id: "oil", name: "Oil" },
+  { id: "coal", name: "Coal" },
 ];
 
 /**
@@ -35,15 +35,16 @@ export type TechInfo = {
   controllable: boolean;
   co2: number;
   cost: number;
+  renewable: "yes" | "no" | "debated";
 };
 
 export const TECH_INFO: Record<string, TechInfo> = {
-  hydro: { green: true, controllable: true, co2: 5, cost: 40 },
-  nuclear: { green: true, controllable: true, co2: 12, cost: 60 },
-  solar: { green: true, controllable: false, co2: 20, cost: 50 },
-  wind: { green: true, controllable: false, co2: 15, cost: 45 },
-  biomass: { green: true, controllable: true, co2: 100, cost: 55 },
-  coal: { green: false, controllable: true, co2: 820, cost: 70 },
-  oil: { green: false, controllable: true, co2: 650, cost: 75 },
-  gas: { green: false, controllable: true, co2: 450, cost: 55 },
+  hydro: { green: true, controllable: true, co2: 5, cost: 40, renewable: "yes" },
+  nuclear: { green: true, controllable: true, co2: 12, cost: 60, renewable: "debated" },
+  wind: { green: true, controllable: false, co2: 15, cost: 45, renewable: "yes" },
+  solar: { green: true, controllable: false, co2: 20, cost: 50, renewable: "yes" },
+  biomass: { green: true, controllable: true, co2: 100, cost: 55, renewable: "debated" },
+  gas: { green: false, controllable: true, co2: 450, cost: 55, renewable: "no" },
+  oil: { green: false, controllable: true, co2: 650, cost: 75, renewable: "no" },
+  coal: { green: false, controllable: true, co2: 820, cost: 70, renewable: "no" },
 };
