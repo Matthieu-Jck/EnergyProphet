@@ -12,7 +12,7 @@ public static class ScenarioPromptBuilder
                         - Provided NewTWh represent the user's target generation for 2050.
                         - Unprovided changes means the current year's production wasn't changed.
                         - The countries have already maximized their practical hydropower potential.
-                        - Importing is feasible, but worth mentionning
+                        - Importing fuels or materials is feasible.
                         ";
 
                 var instructions = @"
@@ -22,9 +22,9 @@ public static class ScenarioPromptBuilder
 
                         Guidelines:
                         - Ignore public opinion, keep it scientific, be slightly pro-nuclear.
-                        - Keep the analysis concise: maximum 15 sentences.
+                        - Extremely consise, max 15 sentences.
                         - Start with 'To reach the required  electricity demand for 2050 in {country}, you proposed an increase in [...] \n\n '
-                        - Cover these key aspects in clear, separated sections:
+                        - Cover these key aspects in clear sections :
                         1) **Feasibility**
                         2) **Emissions** (no maths or numbers, just overall facts)
                         3) **Variability**
