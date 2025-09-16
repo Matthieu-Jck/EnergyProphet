@@ -1,33 +1,49 @@
 using Microsoft.AspNetCore.Mvc;
 using EnergyProphet.Api.Models;
 using EnergyProphet.Api.Services;
+using Microsoft.AspNetCore.Cors;
 
 [ApiController]
 [Route("api/[controller]")]
+[EnableCors("AllowFrontend")]
 public class CountriesController : ControllerBase
 {
     private readonly IDataRepository _repo;
-    private readonly IAIService _ai;
 
-    public CountriesController(IDataRepository repo, IAIService ai)
+    public CountriesController(IDataRepository repo)
     {
         _repo = repo;
-        _ai = ai;
     }
 
-    [HttpGet] // GET /api/countries
-    public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Country>>> GetCountries([FromServices] ILogger<CountriesController> logger)
     {
-        var countries = await _repo.GetCountriesAsync();
-        return Ok(countries);
+        try
+        {
+            var countries = await _repo.GetCountriesAsync();
+            return Ok(countries);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error fetching countries");
+            return StatusCode(500, "Internal server error");
+        }
     }
 
-    [HttpGet("{id}")] // GET /api/countries/{id}
-    public async Task<ActionResult<Country>> GetCountry(string id)
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Country>> GetCountry(string id, [FromServices] ILogger<CountriesController> logger)
     {
-        var country = await _repo.GetCountryAsync(id);
-        if (country == null) return NotFound();
-        return Ok(country);
+        try
+        {
+            var country = await _repo.GetCountryAsync(id);
+            if (country == null) return NotFound();
+            return Ok(country);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error fetching country {Id}", id);
+            return StatusCode(500, "Internal server error");
+        }
     }
-
 }
