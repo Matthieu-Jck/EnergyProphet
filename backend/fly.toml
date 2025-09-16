@@ -9,6 +9,11 @@ primary_region = 'cdg'
 [build]
   dockerfile = 'Dockerfile'
 
+[env]
+  ASPNETCORE_ENVIRONMENT = "Production"
+  GOOGLE_MODEL = "gemini-2.0-flash"
+  USE_GOOGLE = "true"
+  
 [http_service]
   internal_port = 8080
   force_https = true

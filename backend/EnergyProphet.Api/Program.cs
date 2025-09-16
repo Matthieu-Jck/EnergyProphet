@@ -9,8 +9,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpClient();
 
 // Application services
+builder.Services.AddScoped<IDataRepository, DataRepository>();
 builder.Services.AddScoped<IAIService, AIService>();
 builder.Services.AddSingleton<IDataRepository, DataRepository>();
+builder.Services.AddSingleton<IAIService, AIService>();
 
 // Swagger/OpenAPI
 builder.Services.AddSwaggerGen(c =>

@@ -11,8 +11,8 @@ public static class ScenarioPromptBuilder
                 var explanation = @"
                         - Provided NewTWh represent the user's target generation for 2050.
                         - Unprovided changes means the current year's production wasn't changed.
-                        - The countries have already maximized their practical hydropower potential.
-                        - Importing fuels or materials is feasible.
+                        - The countries have already almost maximized their practical hydropower potential.
+                        - Having only solar or wind is not possible because batteries are not advanced enough.
                         ";
 
                 var instructions = @"
@@ -21,15 +21,14 @@ public static class ScenarioPromptBuilder
                         Analyze the scenario as if speaking directly to the user.
 
                         Guidelines:
-                        - Ignore public opinion, keep it scientific, be slightly pro-nuclear.
+                        - Ignore public opinion, keep it scientific.
                         - Extremely consise, max 15 sentences.
-                        - Start with 'To reach the required  electricity demand for 2050 in {country}, you proposed an increase in [...] \n\n '
+                        - Start with 'To reach the required  electricity demand for 2050 in {country}, you proposed an increase in [...] of {x} TWh... \n\n '
                         - Cover these key aspects in clear sections :
                         1) **Feasibility**
                         2) **Emissions** (no maths or numbers, just overall facts)
-                        3) **Variability**
-                        4) **Cost**
-                        5) A precise **Conclusion**
+                        3) **Variability** (if too variable, mention that storage technology is not yet capable of this)
+                        5) A precise **Conclusion**, with a closed end. Tell to try again if the solution is too bad.
                         ";
 
                                         return $@"
