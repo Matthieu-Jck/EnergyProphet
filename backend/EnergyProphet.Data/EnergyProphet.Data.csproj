@@ -2,8 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EnergyProphet.Domain\EnergyProphet.Domain.csproj" />
-    <None Include="data\countries.json">
-      <Content Include="data\**\*.*" CopyToOutputDirectory="Always" />
+    <None Include="data\**\*.*" CopyToOutputDirectory="Always">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using EnergyProphet.Api.Services;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
