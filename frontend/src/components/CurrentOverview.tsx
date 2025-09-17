@@ -411,7 +411,7 @@ export default function CurrentOverview({ country }: Props) {
                       " text-emerald-900/70"
                     }
                   >
-                    2% annual growth
+                    1% annual growth
                   </div>
                 </div>
               </div>
