@@ -53,7 +53,7 @@ export default function InfoPanel({
               </div>
 
               {/* Info squares */}
-              <div className={`flex flex-1 justify-around ${dens("gap-3", "gap-2", "gap-2")}`}>
+              <div className={`flex flex-1 justify-evenly ${dens("gap-3", "gap-2", "gap-2")}`}>
                 {/* CO₂ */}
                 <div
                   className={`flex flex-col items-center justify-center rounded-lg shadow-sm ${co2Color} ${dens(
