@@ -89,8 +89,11 @@ function App() {
     <div
       id="app-root"
       className="h-[100svh] md:h-screen grid grid-rows-[auto,1fr] bg-cover bg-center"
-      style={{ backgroundImage: "url('./background/darkgreen_abstract.jpg')" }}
+      style={{
+        backgroundImage: 'linear-gradient(135deg, #ffffffff, #8dac8dff, #365438ff)'
+      }}
     >
+
 
       <Header
         countries={countries}
