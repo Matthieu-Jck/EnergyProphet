@@ -199,7 +199,7 @@ export default function CurrentOverview({ country, simulation }: Props) {
             "text-base"
           )}`}
         >
-          Energy Mix for {country.name}
+          Energy Mix in {country.name}
         </motion.h2>
 
         <motion.div
