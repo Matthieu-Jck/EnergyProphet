@@ -1,5 +1,4 @@
-// src/hooks/useEnergySimulation.ts
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { Country } from "../types";
 import { TECHNOLOGIES, TARGET_YEAR, ANNUAL_GROWTH_RATE as ANNUAL_RATE, EPS } from "../utils/constants";
 import { clamp, nearlyEqual } from "../utils/helpers";
@@ -7,10 +6,8 @@ import { clamp, nearlyEqual } from "../utils/helpers";
 type AddedByTech = Record<string, number>;
 
 export function useEnergySimulation(country: Country) {
-  // base production is taken straight from country prop
+  // --- BASE DATA ---
   const baseProduction = country.totalGenerationTWh;
-
-  // safer years calculation (use current year; never negative)
   const currentYear = new Date().getFullYear();
   const years = Math.max(0, TARGET_YEAR - currentYear);
 
@@ -19,7 +16,6 @@ export function useEnergySimulation(country: Country) {
     [baseProduction, years]
   );
 
-  // maps for quick lookups
   const shareMap = useMemo(
     () => Object.fromEntries(country.technologies.map((t) => [t.id, t.share])),
     [country.technologies]
@@ -33,28 +29,37 @@ export function useEnergySimulation(country: Country) {
     [baseProduction, shareMap]
   );
 
-  // unit step magnitude (always positive). If predicted === base, use a small fallback step
   const unitStepTWh = useMemo(() => {
     const diff = Math.abs(predictedProduction - baseProduction);
-    if (diff <= EPS) {
-      // fallback to a small fraction (0.5% of base) if no growth or very tiny diff
-      return Math.max(1e-6, baseProduction * 0.005);
-    }
+    if (diff <= EPS) return Math.max(1e-6, baseProduction * 0.005);
     return Math.max(1e-6, diff / 5);
   }, [predictedProduction, baseProduction]);
 
-  // state holding user adjustments
+  // --- STATE THAT NEEDS RESET ON COUNTRY CHANGE ---
   const [addedByTech, setAddedByTech] = useState<AddedByTech>({});
+  const [order, setOrder] = useState<string[]>(() => TECHNOLOGIES.map((t) => t.id));
 
-  // helper to sum values
-  const sumValues = useCallback((map: Record<string, number>) => {
-    return Object.values(map).reduce((s, v) => s + v, 0);
-  }, []);
+  // reset state automatically whenever the country changes
+  useEffect(() => {
+    setAddedByTech({});
+    setOrder(
+      [...TECHNOLOGIES]
+        .sort((a, b) => {
+          const sA = country.technologies.find((t) => t.id === a.id)?.share ?? 0;
+          const sB = country.technologies.find((t) => t.id === b.id)?.share ?? 0;
+          return sB - sA;
+        })
+        .map((t) => t.id)
+    );
+  }, [country.id, country.technologies]);
+
+  // --- DERIVED VALUES ---
+  const sumValues = useCallback((map: Record<string, number>) =>
+    Object.values(map).reduce((s, v) => s + v, 0), []);
 
   const totalDelta = useMemo(() => sumValues(addedByTech), [addedByTech, sumValues]);
   const newTotalTWh = useMemo(() => baseProduction + totalDelta, [baseProduction, totalDelta]);
 
-  // progress
   const progress = useMemo(
     () => clamp((newTotalTWh / Math.max(predictedProduction, 1e-9)) * 100, 0, 100),
     [newTotalTWh, predictedProduction]
@@ -62,7 +67,6 @@ export function useEnergySimulation(country: Country) {
   const isBalanced = useMemo(() => nearlyEqual(newTotalTWh, predictedProduction), [newTotalTWh, predictedProduction]);
   const hasChanges = useMemo(() => Object.values(addedByTech).some((v) => Math.abs(v) > EPS), [addedByTech]);
 
-  // changes payload used by AnalyzeButton / API
   const changes = useMemo(() => {
     const entries: {
       id: string;
@@ -81,10 +85,11 @@ export function useEnergySimulation(country: Country) {
       const newShare = newTotalTWh > 0 ? newTWh / newTotalTWh : 0;
       entries.push({ id, prevShare, prevTWh, newShare, newTWh });
     }
+
     return entries;
   }, [addedByTech, shareMap, originalGenById, newTotalTWh]);
 
-  // Adjust tech generation
+  // --- ACTIONS ---
   const adjustTech = useCallback(
     (techId: string, dir: 1 | -1) => {
       setAddedByTech((prev) => {
@@ -115,9 +120,6 @@ export function useEnergySimulation(country: Country) {
 
   const handleReset = useCallback(() => setAddedByTech({}), []);
 
-  // stable order state can live in the hook (so it persists across renders)
-  const [order, setOrder] = useState<string[]>(() => TECHNOLOGIES.map((t) => t.id));
-  // expose a helper to reset order based on country shares
   const resetOrderFromCountry = useCallback(
     (c: Country) => {
       setOrder(
@@ -134,22 +136,15 @@ export function useEnergySimulation(country: Country) {
   );
 
   return {
-    // inputs / base
     baseProduction,
     predictedProduction,
     years,
-
-    // maps
     shareMap,
     originalGenById,
-
-    // state + actions
     addedByTech,
     adjustTech,
     handleReset,
     setAddedByTech,
-
-    // derived
     unitStepTWh,
     totalDelta,
     newTotalTWh,
@@ -157,8 +152,6 @@ export function useEnergySimulation(country: Country) {
     isBalanced,
     hasChanges,
     changes,
-
-    // ordering helpers
     order,
     setOrder,
     resetOrderFromCountry,

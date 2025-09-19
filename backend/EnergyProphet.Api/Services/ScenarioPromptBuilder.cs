@@ -22,13 +22,14 @@ public static class ScenarioPromptBuilder
 
                         Guidelines:
                         - Ignore public opinion, keep it scientific.
-                        - Extremely consise, max 15 sentences.
                         - Start with 'To reach the required  electricity demand for 2050 in {country}, you proposed an increase in [...] of {x} TWh... \n\n '
-                        - Cover these key aspects in clear sections :
-                        1) **Feasibility**
-                        2) **Emissions** (no maths or numbers, just overall facts)
-                        3) **Variability** (if too variable, mention that storage technology is not yet capable of this)
-                        5) A precise **Conclusion**, with a closed end. Tell to try again if the solution is too bad.
+                        - Cover this plan in marked sections, maximum three sentences per section :
+                        1) **Feasibility** : 
+                        2) **Emissions** : (no maths or numbers, just overall facts)
+                        3) **Variability** : (if too variable, mention that storage technology is not yet capable of this)
+                        4) **Price** : (compared to the other options)
+                        A line
+                        5) **Conclusion** : (precise, with encouragement to try again if the plan is really bad)
                         ";
 
                                         return $@"

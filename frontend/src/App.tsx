@@ -21,13 +21,17 @@ function App() {
   const density = useViewportDensity()
   const isLargeScreen = useIsLargeScreen()
 
-  const simulation = useEnergySimulation(current ?? {
-    id: "",
-    name: "",
-    totalGenerationTWh: 0,
-    technologies: [],
-  });
+  // Use the hook at the top level, unconditionally
+  const simulation = useEnergySimulation(
+    current ?? {
+      id: "",
+      name: "",
+      totalGenerationTWh: 0,
+      technologies: [],
+    }
+  )
 
+  // Load countries on mount
   useEffect(() => {
     let mounted = true
     setLoadingCountries(true)
@@ -55,6 +59,7 @@ function App() {
     return () => { mounted = false }
   }, [])
 
+  // Load selected country
   useEffect(() => {
     if (!selected) {
       setCurrent(null)
@@ -93,8 +98,6 @@ function App() {
         backgroundImage: 'linear-gradient(135deg, #ffffffff, #8dac8dff, #365438ff)'
       }}
     >
-
-
       <Header
         countries={countries}
         value={selected}
@@ -116,7 +119,6 @@ function App() {
           )
         )}
       </main>
-
 
       <LoadingOverlay visible={isLoading} message="Loading…" />
     </div>
