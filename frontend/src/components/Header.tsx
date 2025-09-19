@@ -88,9 +88,7 @@ export default function Header({ countries, value, onChange, density = 'normal' 
                     aria-hidden
                 />
 
-                <div
-                    className={`relative z-10 container mx-auto h-full flex justify-between items-center ${styles.container}`}
-                >
+                <div className={`relative z-10 w-full h-full flex justify-between items-center ${styles.container}`}>
                     {/* Logo + Title */}
                     <div className={`flex items-center ${styles.gap}`}>
                         <motion.div

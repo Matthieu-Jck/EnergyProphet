@@ -29,9 +29,10 @@ const listItem = {
 
 interface Props {
   country: Country;
+  simulation: ReturnType<typeof useEnergySimulation>;
 }
 
-export default function CurrentOverview({ country }: Props) {
+export default function CurrentOverview({ country, simulation }: Props) {
   // UI state
   const [openTechId, setOpenTechId] = useState<string | null>(null);
   const [firstLoad, setFirstLoad] = useState(true);
@@ -65,7 +66,7 @@ export default function CurrentOverview({ country }: Props) {
     shareMap,
     order,
     resetOrderFromCountry,
-  } = useEnergySimulation(country);
+  } = simulation
 
   // reset when switching countries
   useEffect(() => {
@@ -246,7 +247,7 @@ export default function CurrentOverview({ country }: Props) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.34, delay: 0.06 }}
-          className={`text-center text-emerald-700/90 mb-3 ${dens(
+          className={`text-center font-bold text-emerald-700/90 mb-3 ${dens(
             "text-[14px]",
             "text-[11px]",
             "text-[11px]"
@@ -431,8 +432,8 @@ export default function CurrentOverview({ country }: Props) {
                 >
                   <motion.div
                     className={`${progressIsFull && progressAnimDone
-                        ? "bg-emerald-600"
-                        : "bg-emerald-400"
+                      ? "bg-emerald-600"
+                      : "bg-emerald-400"
                       } h-full`}
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
