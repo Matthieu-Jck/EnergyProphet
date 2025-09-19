@@ -14,22 +14,25 @@ const TypedSelect = Select as unknown as <Option, IsMulti extends boolean = fals
 
 const densityStyles = {
   normal: {
-    control: { width: 140, fontSize: "0.8rem", minHeight: "2.1rem" },
+    control: { width: 140, fontSize: "0.8rem", minHeight: "2.3rem" },
     option: { fontSize: "0.8rem" },
   },
   compact: {
-    control: { width: 120, fontSize: "0.75rem", minHeight: "1.9rem" },
+    control: { width: 140, fontSize: "0.75rem", minHeight: "2.0rem" },
     option: { fontSize: "0.75rem" },
   },
   ultra: {
-    control: { width: 110, fontSize: "0.7rem", minHeight: "1.7rem" },
+    control: { width: 140, fontSize: "0.7rem", minHeight: "1.7rem" },
     option: { fontSize: "0.7rem" },
   },
 } as const;
 
 
-export default function CountryPicker({ countries, value, onChange }: Props) {
+export default function CountryPicker({ countries, value, onChange, density = 'normal' }: Props) {
+
   const selectedCountry = countries.find((c) => c.id === value);
+  const selectedDensity = densityStyles[density];
+
 
   return (
     <TypedSelect<Country, false>
@@ -65,14 +68,12 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           borderColor: isFocused ? '#0eae00ff' : '#000000ff',
           padding: '0.1rem 0.25rem',
           borderRadius: '0.5rem',
-          '&:hover': {
-            borderColor: '#0eae00ff',
-          },
+          '&:hover': { borderColor: '#0eae00ff' },
           boxShadow: isFocused ? '0 0 0 1px #0eae00ff' : 'none',
           outline: 'none',
-          width: '140px',
-          fontSize: '0.8rem',
-          minHeight: '2.1rem',
+          width: selectedDensity.control.width,
+          fontSize: selectedDensity.control.fontSize,
+          minHeight: selectedDensity.control.minHeight,
           display: 'flex',
           alignItems: 'center',
           textAlign: 'center',
@@ -85,6 +86,14 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
             opacity: 0,
             cursor: 'pointer',
           },
+        }),
+        option: (base, { isFocused }) => ({
+          ...base,
+          backgroundColor: isFocused ? '#F3F4F6' : 'white',
+          color: '#1F2937',
+          fontSize: selectedDensity.option.fontSize,
+          userSelect: 'none',
+          cursor: 'pointer',
         }),
         indicatorsContainer: (base) => ({
           ...base,
@@ -117,15 +126,7 @@ export default function CountryPicker({ countries, value, onChange }: Props) {
           width: '140px',
           borderRadius: '0.5rem',
           fontSize: '0.8rem',
-        }),
-        option: (base, { isFocused }) => ({
-          ...base,
-          backgroundColor: isFocused ? '#F3F4F6' : 'white',
-          color: '#1F2937',
-          fontSize: '0.8rem',
-          userSelect: 'none',
-          cursor: 'pointer',
-        }),
+        })
       }}
       menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
       menuPosition="fixed"

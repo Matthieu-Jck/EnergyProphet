@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import Header from './components/Header'
 import CurrentOverview from './components/CurrentOverview'
+import VisualRepartition from './components/VisualRepartition'
 import LoadingOverlay from './components/LoadingOverlay'
 import { Country } from './types'
 import { getCountries, getCountry } from './api'
 import { useViewportDensity } from './hooks/useViewportDensity'
+import { useIsLargeScreen } from './hooks/useIsLargeScreen'
+import { useEnergySimulation } from './hooks/useEnergySimulation'
 
 function App() {
   const [countries, setCountries] = useState<Country[]>([])
@@ -16,6 +19,14 @@ function App() {
   const [loadingCountry, setLoadingCountry] = useState<boolean>(false)
 
   const density = useViewportDensity()
+  const isLargeScreen = useIsLargeScreen()
+
+  const simulation = useEnergySimulation(current ?? {
+    id: "",
+    name: "",
+    totalGenerationTWh: 0,
+    technologies: [],
+  });
 
   useEffect(() => {
     let mounted = true
@@ -75,7 +86,12 @@ function App() {
   const isLoading = loadingCountries || loadingCountry
 
   return (
-    <div id="app-root" className="h-[100svh] md:h-screen grid grid-rows-[auto,1fr] bg-gray-100">
+    <div
+      id="app-root"
+      className="h-[100svh] md:h-screen grid grid-rows-[auto,1fr] bg-cover bg-center"
+      style={{ backgroundImage: "url('./background/darkgreen_abstract.jpg')" }}
+    >
+
       <Header
         countries={countries}
         value={selected}
@@ -83,19 +99,21 @@ function App() {
         density={density}
       />
 
-      <main className="min-h-0 overflow-auto">
-        <div className="mx-auto max-w-3xl w-full h-full px-4 pt-4 pb-[max(env(safe-area-inset-bottom),1rem)] flex flex-col relative">
-          {error && (
-            <div role="alert" className="bg-red-100 text-red-700 p-4 rounded mb-4">
-              {error}
+      <main className="p-3 h-full">
+        {current && (
+          isLargeScreen ? (
+            <div className="grid grid-cols-2 gap-3 h-full p-4">
+              <div className="max-w-2xl w-full ml-auto">
+                <CurrentOverview country={current} simulation={simulation} />
+              </div>
+              <VisualRepartition country={current} simulation={simulation} />
             </div>
-          )}
-
-          <div className="flex-1 min-h-0">
-            {current && <CurrentOverview country={current} />}
-          </div>
-        </div>
+          ) : (
+            <CurrentOverview country={current} simulation={simulation} />
+          )
+        )}
       </main>
+
 
       <LoadingOverlay visible={isLoading} message="Loading…" />
     </div>
