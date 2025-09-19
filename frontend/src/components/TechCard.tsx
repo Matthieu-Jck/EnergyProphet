@@ -151,33 +151,22 @@ export default function TechCard({
         {isOpen && (
           <motion.div
             key="controls"
-            initial={{ opacity: 0, scale: 0.9, y: "-50%" }}
-            animate={{ opacity: 1, scale: 1, y: "-50%" }}
-            exit={{ opacity: 0, scale: 0.9, y: "-50%" }}
+            initial={{ opacity: 0, scale: 0.9, y: "-50%", x: "-50%" }}
+            animate={{ opacity: 1, scale: 1, y: "-50%", x: "-50%" }}
+            exit={{ opacity: 0, scale: 0.9, y: "-50%", x: "-50%" }}
             transition={{ duration: 0.2 }}
-            className={`absolute top-1/2 ${sideClass} z-[10]`}
+            className="absolute top-1/2 left-1/2 z-[10] flex flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative flex flex-col items-center bg-white border border-emerald-200 rounded-xl shadow-lg p-2 gap-2 select-none">
-              <div
-                className={`pointer-events-none absolute top-1/2 -translate-y-1/2 ${colIndex === 0 ? "-left-2" : "-right-2"
-                  }`}
-              >
-                <div
-                  className={`${colIndex === 0
-                      ? "border-y-[8px] border-y-transparent border-r-[8px] border-r-emerald-500"
-                      : "border-y-[8px] border-y-transparent border-l-[8px] border-l-emerald-500"
-                    }`}
-                />
-              </div>
-
+              {/* Remove the side arrow if you want it centered */}
               <button
                 type="button"
                 onClick={onIncrease}
                 disabled={!canIncrease}
                 className={`${btnSize} rounded-lg border border-gray-200 flex items-center justify-center hover:shadow-sm transition ${!canIncrease
-                    ? "opacity-40 cursor-not-allowed"
-                    : "hover:bg-gray-50"
+                  ? "opacity-40 cursor-not-allowed"
+                  : "hover:bg-gray-50"
                   }`}
                 title="Increase by 20% of target gap"
                 aria-label={`Increase ${tech.name}`}
@@ -194,8 +183,8 @@ export default function TechCard({
                 onClick={onDecrease}
                 disabled={!canDecrease}
                 className={`${btnSize} rounded-lg border border-gray-200 flex items-center justify-center hover:shadow-sm transition ${!canDecrease
-                    ? "opacity-40 cursor-not-allowed"
-                    : "hover:bg-gray-50"
+                  ? "opacity-40 cursor-not-allowed"
+                  : "hover:bg-gray-50"
                   }`}
                 title="Decrease by 20% of target gap"
                 aria-label={`Decrease ${tech.name}`}

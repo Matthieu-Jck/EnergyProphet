@@ -102,7 +102,7 @@ function App() {
       <main className="p-3 h-full">
         {current && (
           isLargeScreen ? (
-            <div className="grid grid-cols-2 gap-3 h-full p-4">
+            <div className="grid grid-cols-2 gap-6 h-full p-4">
               <div className="max-w-2xl w-full ml-auto">
                 <CurrentOverview country={current} simulation={simulation} />
               </div>
