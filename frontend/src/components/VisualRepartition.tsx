@@ -45,7 +45,7 @@ export default function VisualRepartition({ simulation }: Props) {
   return (
     <div className="bg-white rounded-2xl shadow-md p-4 flex flex-col h-full">
       <h2 className="text-lg font-semibold text-emerald-800 mb-3 text-center">
-        Current Energy Mix
+        Current Mix Chart
       </h2>
 
       <div className="flex-1 flex items-center justify-center">
