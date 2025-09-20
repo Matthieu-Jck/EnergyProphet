@@ -90,8 +90,8 @@ export default function TechCard({
       animate="visible"
       ref={forwardedRef}
       onClick={onOpen}
-      className={`relative grid grid-cols-2 gap-2 border rounded-lg ${pad} ${isOpen ? "bg-gray-100" : "bg-white"
-        } hover:bg-gray-100 hover:shadow-sm transition-all duration-200 min-h-[56px] cursor-pointer select-none`}
+      className={`relative grid grid-cols-2 gap-2 border rounded-lg ${pad} ${isOpen ? "bg-green-100" : "bg-white"
+        } hover:bg-green-100 hover:shadow-sm transition-all duration-200 min-h-[56px] cursor-pointer select-none`}
     >
       {/* left side */}
       <div className="flex flex-col items-center justify-center">
@@ -120,6 +120,18 @@ export default function TechCard({
               duration={1}
             />
           </span>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <span
+            className={`${metaSize} text-center transition-colors duration-300 ${tech.genColor}`}
+          >
+            <AnimatedNumber
+              value={tech.generationTWh}
+              format={(v) => `${Math.round(v)} TWh`}
+              duration={1}
+            />
+          </span>
           {tech.trend === "up" && (
             <span
               className="text-green-600 text-xs leading-none"
@@ -134,17 +146,8 @@ export default function TechCard({
             </span>
           )}
         </div>
-
-        <span
-          className={`${metaSize} text-center transition-colors duration-300 ${tech.genColor}`}
-        >
-          <AnimatedNumber
-            value={tech.generationTWh}
-            format={(v) => `${Math.round(v)} TWh`}
-            duration={1}
-          />
-        </span>
       </div>
+
 
       {/* controls */}
       <AnimatePresence>

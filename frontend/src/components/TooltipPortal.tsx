@@ -67,25 +67,52 @@ export default function TooltipPortal({
     };
   }, [visible, anchorRef, maxWidth, gap]);
 
-  // Close on outside click
   useEffect(() => {
     if (!visible) return;
 
-    const handleClick = (e: MouseEvent) => {
-      if (
-        elRef.current &&
-        !elRef.current.contains(e.target as Node) &&
-        !anchorRef.current?.contains(e.target as Node)
-      ) {
-        onClose?.();
-      }
+    let raf1 = 0;
+    let raf2 = 0;
+
+    const update = () => {
+      const anchor = anchorRef?.current;
+      const el = elRef.current;
+      if (!anchor || !el) return;
+
+      const anchorRect = anchor.getBoundingClientRect();
+      const tooltipWidth = Math.min(el.offsetWidth || maxWidth, maxWidth);
+
+      const anchorCenterX = anchorRect.left + anchorRect.width / 2 + window.scrollX;
+      let left = anchorCenterX - tooltipWidth / 2;
+      const minLeft = 8 + window.scrollX;
+      const maxLeft = window.innerWidth - tooltipWidth - 8 + window.scrollX;
+      left = Math.max(minLeft, Math.min(left, maxLeft));
+
+      const top = anchorRect.bottom + gap + window.scrollY;
+      const arrowLeft = anchorCenterX - left;
+
+      setPos({ left, top, arrowLeft, measured: true });
     };
 
-    document.addEventListener("mousedown", handleClick);
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
+    raf1 = requestAnimationFrame(update);
+    raf2 = requestAnimationFrame(update);
+
+    const onScroll = () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      raf1 = requestAnimationFrame(update);
     };
-  }, [visible, onClose, anchorRef]);
+
+    window.addEventListener("resize", onScroll);
+    window.addEventListener("scroll", onScroll, true);
+
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("scroll", onScroll, true);
+    };
+  }, [visible, anchorRef, maxWidth, gap]);
+
 
   if (typeof document === "undefined" || !visible) return null;
 
