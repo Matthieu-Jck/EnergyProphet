@@ -135,22 +135,25 @@ export default function CurrentOverview({ country, simulation }: Props) {
       const delta = addedByTech[id] || 0;
       const newTWh = Math.max(0, originalTWh + delta);
       const newShare = newTotal > 0 ? newTWh / newTotal : 0;
+
       const shareColor =
         newShare > originalShare
           ? "text-emerald-700"
           : newShare < originalShare
             ? "text-red-600"
             : "text-gray-800";
+
       const genColor =
         newTWh > originalTWh
           ? "text-emerald-700"
           : newTWh < originalTWh
             ? "text-red-600"
             : "text-gray-800";
+
       const trend: "up" | "down" | "none" =
-        newShare > originalShare + EPS
+        newTWh > originalTWh + EPS
           ? "up"
-          : newShare < originalShare - EPS
+          : newTWh < originalTWh - EPS
             ? "down"
             : "none";
 
