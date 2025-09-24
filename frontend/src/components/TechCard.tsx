@@ -90,7 +90,7 @@ export default function TechCard({
       animate="visible"
       ref={forwardedRef}
       onClick={onOpen}
-      className={`relative grid grid-cols-2 gap-2 border rounded-lg ${pad} ${isOpen ? "bg-green-100" : "bg-white"
+      className={`relative grid grid-cols-2 gap-2 border rounded-lg ${pad} ${isOpen ? "bg-gray-100" : "bg-white"
         } hover:bg-green-100 hover:shadow-sm transition-all duration-200 min-h-[56px] cursor-pointer select-none`}
     >
       {/* left side */}
