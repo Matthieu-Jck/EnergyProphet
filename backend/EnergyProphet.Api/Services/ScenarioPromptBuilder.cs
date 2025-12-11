@@ -22,7 +22,7 @@ public static class ScenarioPromptBuilder
 
                         Guidelines:
                         - Ignore public opinion, keep it scientific.
-                        - Start with 'To reach the required  electricity demand for 2050 in {country}, you proposed an increase in [...] of {x} TWh... \n\n '
+                        - Start with 'To reach the required electricity demand for 2050 in {country}, you proposed an increase in [...] of {x} TWh... \n\n '
                         - Cover this plan in marked sections, maximum three sentences per section :
                         1) **Feasibility** : 
                         2) **Emissions** : (no maths or numbers, just overall facts)
