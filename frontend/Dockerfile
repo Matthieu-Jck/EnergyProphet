@@ -1,13 +1,22 @@
+# Build stage
 FROM node:20 AS build
+
 WORKDIR /app
-COPY frontend/package*.json ./frontend/
-COPY frontend/ ./frontend/
-WORKDIR /app/frontend
+
+# Only copy package files first (better caching)
+COPY package*.json ./
 RUN npm ci
-RUN npm run build --if-present
 
+# Copy rest of the app
+COPY . .
 
-FROM nginx:stable-alpine AS runtime
-COPY --from=build /app/frontend/dist /usr/share/nginx/html
+# Build Vite/React app
+RUN npm run build
+
+# Runtime stage
+FROM nginx:stable-alpine
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
