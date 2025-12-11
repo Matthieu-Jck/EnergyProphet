@@ -1,70 +1,83 @@
 name: CI — build & test
-push:
-branches: [ main, master ]
-pull_request:
-branches: [ main, master ]
 
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
-backend-build-test:
-name: Backend: restore, build, test
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v4
-- name: Setup .NET
-uses: actions/setup-dotnet@v4
-with:
-dotnet-version: '8.0.x'
-- name: Restore
-working-directory: ./backend
-run: dotnet restore
-- name: Build
-working-directory: ./backend
-run: dotnet build --no-restore --configuration Release
-- name: Test
-working-directory: ./backend
-run: dotnet test --no-build --verbosity normal
-- name: Publish backend artifact
-uses: actions/upload-artifact@v4
-with:
-name: backend-publish
-path: |
-./backend/**/bin/Release
+
+  backend-build-test:
+    name: Backend: restore, build, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        working-directory: ./backend
+        run: dotnet restore
+
+      - name: Build
+        working-directory: ./backend
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        working-directory: ./backend
+        run: dotnet test --no-build --verbosity normal
+
+      - name: Publish backend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-publish
+          path: ./backend/**/bin/Release
 
 
-frontend-build:
-name: Frontend: install & build
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v4
-- name: Setup Node
-uses: actions/setup-node@v4
-with:
-node-version: '20'
-cache: 'npm'
-- name: Install dependencies
-working-directory: ./frontend
-run: npm ci
-- name: Build
-working-directory: ./frontend
-run: npm run build --if-present
-- name: Upload frontend build
-uses: actions/upload-artifact@v4
-with:
-name: frontend-dist
-path: ./frontend/dist
+  frontend-build:
+    name: Frontend: install & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: ./frontend
+        run: npm run build --if-present
+
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: ./frontend/dist
 
 
-codeql:
-name: CodeQL
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v4
-- name: Initialize CodeQL
-uses: github/codeql-action/init@v2
-with:
-languages: 'csharp, javascript'
-- name: Autobuild
-uses: github/codeql-action/autobuild@v2
-- name: Run CodeQL
-uses: github/codeql-action/analyze@v2
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: csharp, javascript
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Run CodeQL
+        uses: github/codeql-action/analyze@v2
