@@ -1,19 +1,158 @@
-/* src/index.css (modified for improved base styles) */
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-    @apply bg-gray-100 text-gray-900 font-sans;
+:root {
+  color-scheme: light;
+  --bg-0: #f6f1e6;
+  --bg-1: #d9e5d3;
+  --bg-2: #7a9888;
+  --bg-3: #173228;
+  --surface-0: rgba(255, 252, 245, 0.8);
+  --surface-1: rgba(255, 250, 242, 0.92);
+  --surface-dark: rgba(22, 49, 39, 0.84);
+  --border-soft: rgba(35, 77, 61, 0.12);
+  --border-strong: rgba(35, 77, 61, 0.18);
+  --text-main: #173228;
+  --text-muted: #587061;
+  --accent: #2f7d62;
+  --accent-strong: #244c3d;
+  --accent-warm: #c88a46;
+  --shadow-soft: 0 14px 32px rgba(21, 47, 38, 0.12);
+  --shadow-strong: 0 26px 64px rgba(21, 47, 38, 0.18);
 }
 
-h1, h2, h3 {
-    @apply text-primary-400;
-}
-
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* prevents scrolling */
+  overflow: hidden;
+}
+
+body {
+  @apply antialiased;
+  font-family: "Instrument Sans", "Segoe UI", sans-serif;
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at top left, rgba(255, 238, 207, 0.92), rgba(255, 238, 207, 0) 32%),
+    radial-gradient(circle at 82% 18%, rgba(217, 229, 211, 0.9), rgba(217, 229, 211, 0) 28%),
+    linear-gradient(135deg, var(--bg-0) 0%, #edf2e5 48%, #d5e0cf 100%);
+}
+
+#root {
+  isolation: isolate;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: var(--text-main);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(47, 125, 98, 0.24);
+  color: var(--text-main);
+}
+
+.app-shell {
+  background:
+    linear-gradient(180deg, rgba(255, 252, 245, 0.36), rgba(255, 252, 245, 0.18)),
+    linear-gradient(135deg, rgba(246, 241, 230, 0.96) 0%, rgba(231, 238, 221, 0.94) 52%, rgba(212, 226, 208, 0.96) 100%);
+}
+
+@layer components {
+  .panel-shell {
+    @apply relative rounded-[28px] border backdrop-blur-xl;
+    background: linear-gradient(160deg, rgba(255, 252, 245, 0.88), rgba(249, 244, 232, 0.72));
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-strong);
+  }
+
+  .panel-shell-dark {
+    @apply rounded-[28px] border backdrop-blur-xl;
+    background: linear-gradient(180deg, rgba(22, 49, 39, 0.96), rgba(34, 70, 56, 0.94) 56%, rgba(56, 99, 78, 0.9) 100%);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 28px 70px rgba(9, 21, 17, 0.3);
+  }
+
+  .section-title {
+    @apply text-center font-bold tracking-tight;
+    color: var(--text-main);
+  }
+
+  .section-copy {
+    @apply text-center;
+    color: var(--text-muted);
+  }
+
+  .subtle-frame {
+    @apply rounded-[22px] border;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(242, 248, 240, 0.64));
+    border-color: rgba(255, 255, 255, 0.68);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .soft-stat-card {
+    @apply rounded-[22px] border text-center;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(235, 243, 231, 0.88));
+    border-color: rgba(47, 125, 98, 0.12);
+    box-shadow: 0 14px 28px rgba(32, 70, 56, 0.08);
+  }
+
+  .analysis-markdown {
+    @apply space-y-4;
+    color: #284539;
+  }
+
+  .analysis-markdown p {
+    @apply my-0;
+  }
+
+  .analysis-markdown h1,
+  .analysis-markdown h2,
+  .analysis-markdown h3 {
+    @apply font-bold tracking-tight;
+    color: var(--accent-strong);
+  }
+
+  .analysis-markdown ul,
+  .analysis-markdown ol {
+    @apply my-0 pl-5;
+  }
+
+  .analysis-markdown li + li {
+    @apply mt-2;
+  }
+
+  .analysis-markdown strong {
+    color: var(--text-main);
+  }
+
+  .analysis-markdown a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .analysis-markdown code {
+    @apply rounded-md px-1.5 py-0.5 text-[0.88em];
+    background: rgba(47, 125, 98, 0.08);
+    color: #204435;
+  }
 }

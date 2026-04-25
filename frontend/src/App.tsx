@@ -21,17 +21,15 @@ function App() {
   const density = useViewportDensity()
   const isLargeScreen = useIsLargeScreen()
 
-  // Use the hook at the top level, unconditionally
   const simulation = useEnergySimulation(
     current ?? {
-      id: "",
-      name: "",
+      id: '',
+      name: '',
       totalGenerationTWh: 0,
       technologies: [],
     }
   )
 
-  // Load countries on mount
   useEffect(() => {
     let mounted = true
     setLoadingCountries(true)
@@ -59,7 +57,6 @@ function App() {
     return () => { mounted = false }
   }, [])
 
-  // Load selected country
   useEffect(() => {
     if (!selected) {
       setCurrent(null)
@@ -91,36 +88,48 @@ function App() {
   const isLoading = loadingCountries || loadingCountry
 
   return (
-    <div
-      id="app-root"
-      className="h-[100svh] md:h-screen grid grid-rows-[auto,1fr] bg-cover bg-center"
-      style={{
-        backgroundImage: 'linear-gradient(135deg, #ffffffff, #8dac8dff, #365438ff)'
-      }}
-    >
-      <Header
-        countries={countries}
-        value={selected}
-        onChange={setSelected}
-        density={density}
-      />
+    <div id="app-root" className="app-shell relative h-[100svh] overflow-hidden md:h-screen">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-28 -top-36 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(255,229,188,0.88)_0%,rgba(255,229,188,0)_72%)]" />
+        <div className="absolute right-[-8rem] top-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(90,135,110,0.24)_0%,rgba(90,135,110,0)_72%)]" />
+        <div className="absolute bottom-[-10rem] left-1/3 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0)_70%)]" />
+        <div className="absolute inset-0 opacity-35 [background-image:linear-gradient(rgba(255,255,255,0.34)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.34)_1px,transparent_1px)] [background-size:58px_58px]" />
+      </div>
 
-      <main className="p-3 h-full">
-        {current && (
-          isLargeScreen ? (
-            <div className="grid grid-cols-2 gap-6 h-full p-4">
-              <div className="max-w-2xl w-full ml-auto">
-                <CurrentOverview country={current} simulation={simulation} />
+      <div className="relative z-10 grid h-full grid-rows-[auto,1fr]">
+        <Header
+          countries={countries}
+          value={selected}
+          onChange={setSelected}
+          density={density}
+        />
+
+        <main className="h-full min-h-0 p-3 md:p-4">
+          {current && (
+            isLargeScreen ? (
+              <div className="grid h-full min-h-0 grid-cols-[minmax(0,1.06fr)_minmax(320px,0.94fr)] gap-4 xl:gap-5">
+                <div className="ml-auto w-full min-w-0 max-w-2xl">
+                  <CurrentOverview country={current} simulation={simulation} />
+                </div>
+                <VisualRepartition country={current} simulation={simulation} />
               </div>
-              <VisualRepartition country={current} simulation={simulation} />
-            </div>
-          ) : (
-            <CurrentOverview country={current} simulation={simulation} />
-          )
-        )}
-      </main>
+            ) : (
+              <CurrentOverview country={current} simulation={simulation} />
+            )
+          )}
 
-      <LoadingOverlay visible={isLoading} message="Loading…" />
+          {!current && error && !isLoading && (
+            <div className="panel-shell flex h-full items-center justify-center p-6 text-center">
+              <div>
+                <h2 className="section-title text-xl">Unable to load the selected country</h2>
+                <p className="section-copy mt-2 text-sm">{error}</p>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+
+      <LoadingOverlay visible={isLoading} message="Loading..." />
     </div>
   )
 }

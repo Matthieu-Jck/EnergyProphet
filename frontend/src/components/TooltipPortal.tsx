@@ -7,7 +7,6 @@ export default function TooltipPortal({
   maxWidth = 300,
   gap = 8,
   children,
-  onClose,
 }: {
   anchorRef: React.RefObject<HTMLElement | null>;
   visible: boolean;
@@ -21,7 +20,6 @@ export default function TooltipPortal({
     left: 0,
     top: 0,
     arrowLeft: 0,
-    measured: false,
   });
 
   useEffect(() => {
@@ -47,72 +45,24 @@ export default function TooltipPortal({
       const top = anchorRect.bottom + gap + window.scrollY;
       const arrowLeft = anchorCenterX - left;
 
-      setPos({ left, top, arrowLeft, measured: true });
+      setPos({ left, top, arrowLeft });
     };
 
-    raf = requestAnimationFrame(update);
-
-    const onScroll = () => {
+    const schedule = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(update);
     };
 
-    window.addEventListener("resize", onScroll);
-    window.addEventListener("scroll", onScroll, true);
+    schedule();
+    window.addEventListener("resize", schedule);
+    window.addEventListener("scroll", schedule, true);
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize", onScroll);
-      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("scroll", schedule, true);
     };
   }, [visible, anchorRef, maxWidth, gap]);
-
-  useEffect(() => {
-    if (!visible) return;
-
-    let raf1 = 0;
-    let raf2 = 0;
-
-    const update = () => {
-      const anchor = anchorRef?.current;
-      const el = elRef.current;
-      if (!anchor || !el) return;
-
-      const anchorRect = anchor.getBoundingClientRect();
-      const tooltipWidth = Math.min(el.offsetWidth || maxWidth, maxWidth);
-
-      const anchorCenterX = anchorRect.left + anchorRect.width / 2 + window.scrollX;
-      let left = anchorCenterX - tooltipWidth / 2;
-      const minLeft = 8 + window.scrollX;
-      const maxLeft = window.innerWidth - tooltipWidth - 8 + window.scrollX;
-      left = Math.max(minLeft, Math.min(left, maxLeft));
-
-      const top = anchorRect.bottom + gap + window.scrollY;
-      const arrowLeft = anchorCenterX - left;
-
-      setPos({ left, top, arrowLeft, measured: true });
-    };
-
-    raf1 = requestAnimationFrame(update);
-    raf2 = requestAnimationFrame(update);
-
-    const onScroll = () => {
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
-      raf1 = requestAnimationFrame(update);
-    };
-
-    window.addEventListener("resize", onScroll);
-    window.addEventListener("scroll", onScroll, true);
-
-    return () => {
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
-      window.removeEventListener("resize", onScroll);
-      window.removeEventListener("scroll", onScroll, true);
-    };
-  }, [visible, anchorRef, maxWidth, gap]);
-
 
   if (typeof document === "undefined" || !visible) return null;
 
@@ -126,10 +76,9 @@ export default function TooltipPortal({
         maxWidth,
         zIndex: 9999,
       }}
-      className="bg-gray-900 text-white text-sm rounded-lg px-3 py-2 shadow-lg"
+      className="rounded-[18px] border border-[#f1d4a6]/20 bg-[#173228]/96 px-4 py-3 text-sm text-[#f8f5ee] shadow-[0_18px_34px_rgba(8,21,16,0.28)] backdrop-blur-md"
     >
       {children}
-      {/* optional arrow */}
       <div
         style={{
           position: "absolute",
@@ -139,7 +88,7 @@ export default function TooltipPortal({
           height: 0,
           borderLeft: "6px solid transparent",
           borderRight: "6px solid transparent",
-          borderBottom: "6px solid #111827",
+          borderBottom: "6px solid #173228",
         }}
       />
     </div>,
