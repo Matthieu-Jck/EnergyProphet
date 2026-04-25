@@ -38,7 +38,6 @@ export default function AnalyzeButton({
   const clickedRef = useRef(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // padding / sizing based on density
   const analyzePad =
     density === "ultra" ? "px-3 py-1.5" : density === "compact" ? "px-4 py-2" : "px-5 py-2.5";
   const analyzeText =
@@ -49,7 +48,7 @@ export default function AnalyzeButton({
   const handleAnalyze = async () => {
     if (!delayedBalanced) {
       setShowAnalyzeTip(true);
-      clickedRef.current = true; // remember the click
+      clickedRef.current = true;
       return;
     }
 
@@ -95,7 +94,6 @@ export default function AnalyzeButton({
     }
   };
 
-  // auto-trigger analysis if user clicked before balance was ready
   useEffect(() => {
     if (delayedBalanced && clickedRef.current) {
       handleAnalyze();
@@ -103,8 +101,9 @@ export default function AnalyzeButton({
   }, [delayedBalanced]);
 
   return (
-    <div className="relative flex items-center justify-center mb-2 w-full">
+    <div className="relative mb-2 flex w-full items-center justify-center">
       <motion.button
+        type="button"
         ref={analyzeBtnRef}
         key={analyzePulseKey}
         whileHover={delayedBalanced && !isProcessing ? { y: -1 } : undefined}
@@ -114,28 +113,29 @@ export default function AnalyzeButton({
         onClick={handleAnalyze}
         disabled={!delayedBalanced || isProcessing}
         title={!delayedBalanced ? "Finish prediction first" : undefined}
-        className={`${analyzePad} rounded-lg ${analyzeText} font-semibold transition-colors transform-gpu ${
+        className={`${analyzePad} rounded-[20px] ${analyzeText} font-semibold transition transform-gpu ${
           delayedBalanced && !isProcessing
-            ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg"
-            : "bg-emerald-600/40 text-white/80 cursor-not-allowed shadow"
+            ? "border border-[#2c5f4d] bg-[linear-gradient(135deg,#356f58_0%,#4f9873_100%)] text-white shadow-[0_18px_34px_rgba(32,73,58,0.28)] hover:shadow-[0_20px_38px_rgba(32,73,58,0.32)]"
+            : "cursor-not-allowed border border-transparent bg-[#356f58]/40 text-white/80 shadow"
         }`}
       >
-        {isProcessing ? "Analyzing…" : "Analyze"}
+        {isProcessing ? "Analyzing..." : "Analyze"}
       </motion.button>
 
-      {/* reset button */}
       <button
+        type="button"
         onClick={onReset}
         aria-label="Reset adjustments"
         title={hasChanges ? "Reset" : "Nothing to reset"}
-        className={`absolute right-0 inline-flex items-center justify-center ${resetSize} rounded-lg border border-transparent bg-white/60 transition ${
-          hasChanges ? "opacity-80 hover:shadow-md hover:bg-white shadow-lg" : "opacity-10 pointer-events-none shadow"
+        className={`absolute right-0 inline-flex items-center justify-center ${resetSize} rounded-2xl border transition ${
+          hasChanges
+            ? "border-white/80 bg-white/72 opacity-90 shadow-[0_14px_30px_rgba(32,73,58,0.16)] hover:bg-white hover:shadow-[0_18px_34px_rgba(32,73,58,0.2)]"
+            : "pointer-events-none border-transparent bg-white/30 opacity-15 shadow"
         }`}
       >
         <img src="./icons/reset.png" alt="" className={resetIcon} />
       </button>
 
-      {/* tooltip */}
       <TooltipPortal
         anchorRef={analyzeBtnRef}
         visible={showAnalyzeTip}

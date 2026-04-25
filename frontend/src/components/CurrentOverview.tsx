@@ -12,7 +12,6 @@ import { useViewportDensity } from "../hooks/useViewportDensity";
 import { useEnergySimulation } from "../hooks/useEnergySimulation";
 import LoadingOverlay from "./LoadingOverlay";
 
-// animations
 const containerMotion = {
   hidden: { opacity: 0, y: 10 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
@@ -33,7 +32,6 @@ interface Props {
 }
 
 export default function CurrentOverview({ country, simulation }: Props) {
-  // UI state
   const [openTechId, setOpenTechId] = useState<string | null>(null);
   const [firstLoad, setFirstLoad] = useState(true);
   const [showAnalyzeTip, setShowAnalyzeTip] = useState(false);
@@ -45,14 +43,11 @@ export default function CurrentOverview({ country, simulation }: Props) {
   const techRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const prevCountryIdRef = useRef(country.id);
 
-  // density helper
   const density = useViewportDensity();
   const dens = <T,>(normal: T, compact: T, ultra: T) =>
     density === "ultra" ? ultra : density === "compact" ? compact : normal;
 
-  // simulation
   const {
-    baseProduction,
     predictedProduction,
     addedByTech,
     adjustTech,
@@ -66,9 +61,8 @@ export default function CurrentOverview({ country, simulation }: Props) {
     shareMap,
     order,
     resetOrderFromCountry,
-  } = simulation
+  } = simulation;
 
-  // reset when switching countries
   useEffect(() => {
     if (prevCountryIdRef.current !== country.id) {
       handleReset();
@@ -80,11 +74,9 @@ export default function CurrentOverview({ country, simulation }: Props) {
 
   useEffect(() => setFirstLoad(false), []);
 
-  // progress bar state
   const [progressAnimDone, setProgressAnimDone] = useState(false);
   useEffect(() => setProgressAnimDone(false), [progress]);
 
-  // delayed balanced
   const [delayedBalanced, setDelayedBalanced] = useState(false);
   const balanceDelayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -103,7 +95,6 @@ export default function CurrentOverview({ country, simulation }: Props) {
     if (delayedBalanced) analyzePulseKeyRef.current += 1;
   }, [delayedBalanced]);
 
-  // close tech card on outside click
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
       if (!openTechId) return;
@@ -114,7 +105,6 @@ export default function CurrentOverview({ country, simulation }: Props) {
     return () => document.removeEventListener("mousedown", onDown);
   }, [openTechId]);
 
-  // cleanup
   useEffect(() => {
     return () => {
       if (tipTimeoutRef.current) clearTimeout(tipTimeoutRef.current);
@@ -122,10 +112,8 @@ export default function CurrentOverview({ country, simulation }: Props) {
     };
   }, []);
 
-  // handlers
   const handleCardClick = useCallback((techId: string) => setOpenTechId(techId), []);
 
-  // compute display techs
   const displayTechs = useMemo(() => {
     const newTotal = newTotalTWh;
     return order.map((id, i) => {
@@ -141,14 +129,14 @@ export default function CurrentOverview({ country, simulation }: Props) {
           ? "text-emerald-700"
           : newShare < originalShare
             ? "text-red-600"
-            : "text-gray-800";
+            : "text-stone-700";
 
       const genColor =
         newTWh > originalTWh
           ? "text-emerald-700"
           : newTWh < originalTWh
             ? "text-red-600"
-            : "text-gray-800";
+            : "text-stone-700";
 
       const trend: "up" | "down" | "none" =
         newTWh > originalTWh + EPS
@@ -186,7 +174,7 @@ export default function CurrentOverview({ country, simulation }: Props) {
         variants={containerMotion as any}
         initial="hidden"
         animate="visible"
-        className={`w-full h-full min-h-0 flex flex-col border border-emerald-200 bg-white rounded-2xl shadow-md ${dens(
+        className={`panel-shell flex h-full min-h-0 w-full flex-col overflow-hidden ${dens(
           "p-3",
           "p-3",
           "p-2"
@@ -196,7 +184,7 @@ export default function CurrentOverview({ country, simulation }: Props) {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.36, delay: 0.02 }}
-          className={`font-bold text-center text-emerald-800 mb-2 ${dens(
+          className={`section-title mb-2 ${dens(
             "text-xl",
             "text-lg",
             "text-base"
@@ -206,11 +194,11 @@ export default function CurrentOverview({ country, simulation }: Props) {
         </motion.h2>
 
         <motion.div
-          className={`grid grid-cols-2 ${dens(
+          className={`mb-2 grid grid-cols-2 overflow-visible ${dens(
             "gap-3",
             "gap-2",
             "gap-1"
-          )} mb-2 overflow-visible`}
+          )}`}
           variants={listContainer as any}
           initial="hidden"
           animate="visible"
@@ -250,7 +238,7 @@ export default function CurrentOverview({ country, simulation }: Props) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.34, delay: 0.06 }}
-          className={`text-center font-bold text-emerald-700/90 mb-3 ${dens(
+          className={`section-copy mb-3 font-medium ${dens(
             "text-[14px]",
             "text-[11px]",
             "text-[11px]"
@@ -263,11 +251,11 @@ export default function CurrentOverview({ country, simulation }: Props) {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.32, delay: 0.04 }}
-          className={`border border-emerald-200 rounded-xl bg-emerald-50/30 flex items-center justify-center ${dens(
-            "p-3 h-[85px]",
-            "p-2 h-[72px]",
-            "p-1 h-[60px]"
-          )} mb-3`}
+          className={`subtle-frame mb-3 flex items-center justify-center ${dens(
+            "h-[85px] p-3",
+            "h-[72px] p-2",
+            "h-[60px] p-1"
+          )}`}
         >
           <AnimatePresence mode="wait">
             {openTechId ? (
@@ -296,9 +284,9 @@ export default function CurrentOverview({ country, simulation }: Props) {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.18 }}
                 className={dens(
-                  "text-gray-400 italic text-[12px]",
-                  "text-gray-400 italic text-[11px]",
-                  "text-gray-400 italic text-[10px]"
+                  "text-[#6d8378] italic text-[12px]",
+                  "text-[#6d8378] italic text-[11px]",
+                  "text-[#6d8378] italic text-[10px]"
                 )}
               >
                 Click an energy source to see details
@@ -307,19 +295,18 @@ export default function CurrentOverview({ country, simulation }: Props) {
           </AnimatePresence>
         </motion.div>
 
-        {/* footer */}
         <div className="mt-auto">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.36 }}
-            className="sticky bottom-0 z-30 bg-white/90 backdrop-blur px-4 py-3 border-t border-emerald-50"
+            className="sticky bottom-0 z-30 border-t border-white/50 bg-[linear-gradient(180deg,rgba(250,247,239,0),rgba(250,247,239,0.92)_18%,rgba(250,247,239,0.98))] px-4 py-3 backdrop-blur-xl"
           >
             <motion.div
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.28, delay: 0.02 }}
-              className="flex items-center justify-center mb-3"
+              className="mb-3 flex items-center justify-center"
             >
               <div className="w-full max-w-md">
                 <AnalyzeButton
@@ -341,33 +328,32 @@ export default function CurrentOverview({ country, simulation }: Props) {
               </div>
             </motion.div>
 
-            {/* progress + stats */}
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.28, delay: 0.04 }}
             >
               <div
-                className={`flex items-center justify-center text-emerald-800 ${dens(
-                  "gap-4 mb-2",
-                  "gap-3 mb-1.5",
-                  "gap-2 mb-1"
+                className={`flex items-center justify-center text-[#173228] ${dens(
+                  "mb-2 gap-4",
+                  "mb-1.5 gap-3",
+                  "mb-1 gap-2"
                 )}`}
               >
                 <div
-                  className={`${dens(
+                  className={`soft-stat-card ${dens(
                     "px-3 py-2",
                     "px-2.5 py-1.5",
                     "px-2 py-1"
-                  )} rounded-lg bg-emerald-50 border border-emerald-100 shadow-sm text-center`}
+                  )}`}
                 >
-                  <div className={dens("text-[11px]", "text-[10px]", "text-[9px]")}>
+                  <div className={`${dens("text-[11px]", "text-[10px]", "text-[9px]")} uppercase tracking-[0.18em] text-[#6b8176]`}>
                     Current Production
                   </div>
                   <div
                     className={
                       dens("text-lg", "text-base", "text-sm") +
-                      " font-extrabold text-emerald-700"
+                      " mt-1 font-extrabold text-[#244c3d]"
                     }
                   >
                     <AnimatedNumber
@@ -380,27 +366,27 @@ export default function CurrentOverview({ country, simulation }: Props) {
 
                 <span
                   className={
-                    dens("text-xl", "text-lg", "text-base") + " text-emerald-600"
+                    dens("text-[10px]", "text-[9px]", "text-[8px]") +
+                    " rounded-full border border-white/70 bg-white/55 px-2 py-1 font-semibold uppercase tracking-[0.24em] text-[#6a8075]"
                   }
-                  aria-hidden
                 >
-                  →
+                  Goal
                 </span>
 
                 <div
-                  className={`${dens(
+                  className={`soft-stat-card ${dens(
                     "px-3 py-2",
                     "px-2.5 py-1.5",
                     "px-2 py-1"
-                  )} rounded-lg bg-emerald-100 border border-emerald-200 shadow-sm text-center`}
+                  )}`}
                 >
-                  <div className={dens("text-[11px]", "text-[10px]", "text-[9px]")}>
+                  <div className={`${dens("text-[11px]", "text-[10px]", "text-[9px]")} uppercase tracking-[0.18em] text-[#6b8176]`}>
                     Required in {TARGET_YEAR}
                   </div>
                   <div
                     className={
                       dens("text-lg", "text-base", "text-sm") +
-                      " font-extrabold text-emerald-700"
+                      " mt-1 font-extrabold text-[#244c3d]"
                     }
                   >
                     <AnimatedNumber
@@ -412,7 +398,7 @@ export default function CurrentOverview({ country, simulation }: Props) {
                   <div
                     className={
                       dens("text-[10px]", "text-[9px]", "text-[8px]") +
-                      " text-emerald-900/70"
+                      " text-[#5f766b]"
                     }
                   >
                     1% annual growth
@@ -422,7 +408,7 @@ export default function CurrentOverview({ country, simulation }: Props) {
 
               <div className="relative" style={{ paddingTop: "0.25rem" }}>
                 <div
-                  className={`relative bg-gray-200 rounded-full overflow-hidden ${dens(
+                  className={`relative overflow-hidden rounded-full border border-white/70 bg-[#d8e3d7] p-[3px] shadow-inner ${dens(
                     "h-[26px]",
                     "h-[22px]",
                     "h-[20px]"
@@ -435,9 +421,9 @@ export default function CurrentOverview({ country, simulation }: Props) {
                 >
                   <motion.div
                     className={`${progressIsFull && progressAnimDone
-                      ? "bg-emerald-600"
-                      : "bg-emerald-400"
-                      } h-full`}
+                      ? "bg-[linear-gradient(90deg,#244c3d_0%,#3f8c69_100%)]"
+                      : "bg-[linear-gradient(90deg,#417c66_0%,#67a784_100%)]"
+                      } h-full rounded-full`}
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 1, ease: "easeOut" }}
@@ -461,7 +447,6 @@ export default function CurrentOverview({ country, simulation }: Props) {
         </div>
       </motion.div>
 
-      {/* analysis popup */}
       {analysisResult && (
         <AnalysisPopup
           result={analysisResult}
@@ -469,8 +454,7 @@ export default function CurrentOverview({ country, simulation }: Props) {
         />
       )}
 
-      {/* loading overlay */}
-      <LoadingOverlay visible={loading} message="Analyzing scenario…" />
+      <LoadingOverlay visible={loading} message="Analyzing scenario..." />
     </>
   );
 }

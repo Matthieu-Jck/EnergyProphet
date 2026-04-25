@@ -5,11 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 type LoadingOverlayProps = {
   visible: boolean
   message?: string
-  /** If true, prevent the page from scrolling while the overlay is visible */
   lockScroll?: boolean
 }
 
-export function LoadingOverlay({ visible, message = 'Loading…', lockScroll = true }: LoadingOverlayProps) {
+export function LoadingOverlay({ visible, message = 'Loading...', lockScroll = true }: LoadingOverlayProps) {
   const overlayFocusRef = useRef<HTMLDivElement | null>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
   const originalOverflow = useRef<string | null>(null)
@@ -17,12 +16,10 @@ export function LoadingOverlay({ visible, message = 'Loading…', lockScroll = t
   useEffect(() => {
     if (typeof document === 'undefined') return
 
-    // prefer an app root id that you control — set id="app-root" on your app container
     const appRoot = document.getElementById('app-root') || document.getElementById('root') || document.body
 
     if (visible) {
       previouslyFocused.current = document.activeElement as HTMLElement | null
-      // focus overlay for screen reader users
       setTimeout(() => overlayFocusRef.current?.focus(), 0)
 
       if (lockScroll) {
@@ -43,7 +40,6 @@ export function LoadingOverlay({ visible, message = 'Loading…', lockScroll = t
     }
   }, [visible, lockScroll])
 
-  // don't try to portal on server
   if (typeof document === 'undefined') return null
 
   return createPortal(
@@ -56,33 +52,29 @@ export function LoadingOverlay({ visible, message = 'Loading…', lockScroll = t
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
           className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-auto"
-          // role/dialog + aria-modal makes sense when you're blocking the UI
           role="dialog"
           aria-modal="true"
           aria-live="polite"
         >
-          {/* backdrop: fills the viewport and captures pointer events so background is not interactive */}
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-[#04120d]/45 backdrop-blur-sm"
             aria-hidden="true"
           />
 
-          {/* content (spinner + message). Make it non-interactive (pointer-events-none) since it's purely informational */}
           <div
             ref={overlayFocusRef}
             tabIndex={-1}
-            className="relative z-10 flex flex-col items-center gap-3 p-6 pointer-events-none select-none"
+            className="panel-shell-dark relative z-10 flex flex-col items-center gap-3 px-8 py-6 pointer-events-none select-none text-stone-100"
           >
             <div
-              className="w-14 h-14 rounded-full border-4 border-t-transparent border-gray-300 animate-spin"
+              className="h-14 w-14 animate-spin rounded-full border-4 border-[#d7e6d4]/80 border-t-[#e7b874]"
               aria-hidden="true"
             />
 
-            <span className="text-sm text-white" aria-live="polite">
+            <span className="text-sm tracking-[0.12em] text-stone-100" aria-live="polite">
               {message}
             </span>
 
-            {/* hidden live region for screen readers (extra accessibility) */}
             <span className="sr-only" aria-live="polite">{message}</span>
           </div>
         </motion.div>
