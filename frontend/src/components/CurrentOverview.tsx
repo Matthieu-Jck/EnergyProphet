@@ -96,13 +96,13 @@ export default function CurrentOverview({ country, simulation }: Props) {
   }, [delayedBalanced]);
 
   useEffect(() => {
-    const onDown = (e: MouseEvent) => {
+    const onClickOutside = (e: MouseEvent) => {
       if (!openTechId) return;
       const el = techRefs.current[openTechId];
       if (el && !el.contains(e.target as Node)) setOpenTechId(null);
     };
-    document.addEventListener("mousedown", onDown);
-    return () => document.removeEventListener("mousedown", onDown);
+    document.addEventListener("click", onClickOutside);
+    return () => document.removeEventListener("click", onClickOutside);
   }, [openTechId]);
 
   useEffect(() => {
