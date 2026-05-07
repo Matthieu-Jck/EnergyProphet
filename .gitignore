@@ -478,6 +478,7 @@ coverage/
 # Fichiers de déploiement ou sensibles
 appsettings.Development.json
 appsettings.*.json
+backend/EnergyProphet.Api/Properties/launchSettings.json
 *.pem
 *.key
 *.crt
